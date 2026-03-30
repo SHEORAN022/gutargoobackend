@@ -2,332 +2,307 @@
 
 // class BunnyCdnService {
 //   constructor() {
-//     this.apiKey = process.env.BUNNY_API_KEY;
+//     this.videoApiKey = process.env.BUNNY_VIDEO_API_KEY;
+//     this.storagePassword = process.env.BUNNY_STORAGE_PASSWORD;
+
 //     this.libraryId = process.env.BUNNY_LIBRARY_ID;
-//     this.cdnHostname = process.env.BUNNY_CDN_HOSTNAME;
+//     this.cdnHostname = process.env.BUNNY_CDN_HOSTNAME; // video CDN
+//     this.storageZone = process.env.BUNNY_STORAGE_ZONE; // image CDN
+
 //     this.baseUrl = `https://video.bunnycdn.com/library/${this.libraryId}`;
-    
-//     console.log("\n╔════════════════════════════════════════════╗");
-//     console.log("║     🐰 BUNNY CDN SERVICE INITIALIZED     ║");
-//     console.log("╠════════════════════════════════════════════╣");
-//     console.log(`║ Library ID: ${this.libraryId}`);
-//     console.log(`║ CDN Hostname: ${this.cdnHostname}`);
-//     console.log(`║ API Key: ${this.apiKey ? this.apiKey.substring(0, 8) + '...' : 'MISSING'}`);
-//     console.log("╚════════════════════════════════════════════╝\n");
+
+//     console.log("\n🐰 Bunny CDN Initialized");
+//     console.log("Library:", this.libraryId);
+//     console.log("Storage Zone:", this.storageZone);
 //   }
 
-//   getHeaders() {
-//     return { 
-//       AccessKey: this.apiKey,
-//       "Content-Type": "application/json"
-//     };
+//   // ================= VIDEO STATUS =================
+//   async getVideoStatus(videoId) {
+//     try {
+//       const res = await axios.get(
+//         `${this.baseUrl}/videos/${videoId}`,
+//         {
+//           headers: {
+//             AccessKey: this.videoApiKey,
+//           },
+//         }
+//       );
+//       return res.data;
+//     } catch (error) {
+//       console.error("❌ Status Error:", error.message);
+//       return null;
+//     }
 //   }
 
+//   // ================= VIDEO UPLOAD =================
 //   async uploadVideo(fileBuffer, fileName, mimeType) {
 //     let videoId = null;
-    
+
 //     try {
-//       console.log("\n📹 STEP 1: Creating video entry in Bunny CDN...");
-//       const createRes = await axios.post(`${this.baseUrl}/videos`, {
-//         title: fileName.replace(/\.[^/.]+$/, ""),
-//         collectionId: null,
-//         enableTtl: false
-//       }, { headers: this.getHeaders() });
+//       console.log("\n📹 Creating video...");
+
+//       const createRes = await axios.post(
+//         `${this.baseUrl}/videos`,
+//         {
+//           title: fileName.replace(/\.[^/.]+$/, ""),
+//         },
+//         {
+//           headers: {
+//             AccessKey: this.videoApiKey,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
 
 //       videoId = createRes.data.guid;
-//       console.log(`   ✅ Video created! ID: ${videoId}`);
+//       console.log("✅ Video ID:", videoId);
 
-//       console.log("\n📤 STEP 2: Uploading video file...");
+//       console.log("📤 Uploading video file...");
+
 //       await axios.put(
-//         `https://video.bunnycdn.com/library/${this.libraryId}/videos/${videoId}`,
+//         `${this.baseUrl}/videos/${videoId}`,
 //         fileBuffer,
 //         {
-//           headers: { 
-//             AccessKey: this.apiKey, 
-//             "Content-Type": mimeType 
+//           headers: {
+//             AccessKey: this.videoApiKey,
+//             "Content-Type": mimeType,
 //           },
 //           maxBodyLength: Infinity,
 //           maxContentLength: Infinity,
-//           timeout: 300000
 //         }
 //       );
-//       console.log("   ✅ Upload complete!");
 
-//       console.log("\n⏳ STEP 3: Waiting for transcoding...");
-//       let videoInfo = null;
+//       // ================= WAIT FOR ENCODING =================
+//       console.log("⏳ Waiting for video encoding...");
+
+//       let isReady = false;
 //       let attempts = 0;
-//       const maxAttempts = 40;
-      
-//       while (attempts < maxAttempts) {
-//         await this.sleep(3000);
-        
-//         const infoRes = await axios.get(`${this.baseUrl}/videos/${videoId}`, {
-//           headers: this.getHeaders()
-//         });
-//         videoInfo = infoRes.data;
-        
-//         const statusMap = {0:"New",1:"Queued",2:"Processing",3:"Ready ✅",4:"Failed",5:"Error"};
-//         console.log(`   Status: ${statusMap[videoInfo.status]} (${attempts + 1}/${maxAttempts})`);
-        
-//         if (videoInfo.status === 3) {
-//           console.log("   ✅ Transcoding complete!");
-//           break;
-//         } else if (videoInfo.status === 4) {
-//           console.log("   ⚠️ Transcoding failed, but video will still be available as MP4");
-//           break;
+
+//       while (!isReady && attempts < 20) {
+//         const video = await this.getVideoStatus(videoId);
+
+//         if (video && video.status === 4) {
+//           isReady = true;
+//           console.log("✅ Video is ready for streaming!");
+//         } else {
+//           attempts++;
+//           console.log(`⏳ Encoding... attempt ${attempts}`);
+//           await new Promise((r) => setTimeout(r, 5000));
 //         }
-        
-//         attempts++;
 //       }
 
-//       console.log("\n🎬 STEP 4: Generating stream URLs...");
-//       const hlsUrl = `https://${this.cdnHostname}/${videoId}/playlist.m3u8`;
-//       const mp4Url = `https://${this.cdnHostname}/${videoId}/video.mp4`;
-//       const thumbnailUrl = `https://${this.cdnHostname}/${videoId}/thumbnail.jpg`;
-
-//       console.log("\n╔════════════════════════════════════════════╗");
-//       console.log("║     🎬 VIDEO STREAM URLs GENERATED       ║");
-//       console.log("╠════════════════════════════════════════════╣");
-//       console.log(`║ HLS: ${hlsUrl}`);
-//       console.log(`║ MP4: ${mp4Url}`);
-//       console.log(`║ Thumbnail: ${thumbnailUrl}`);
-//       console.log("╚════════════════════════════════════════════╝\n");
+//       if (!isReady) {
+//         console.warn("⚠️ Video not fully ready yet, but continuing...");
+//       }
 
 //       return {
 //         videoId,
-//         url: hlsUrl,
-//         hlsUrl,
-//         mp4Url,
-//         thumbnailUrl,
-//         duration: videoInfo?.length || 0,
-//         size: fileBuffer.length,
-//         status: videoInfo?.status || 3
+//         hlsUrl: `https://${this.cdnHostname}/${videoId}/playlist.m3u8`,
+//         mp4Url: `https://${this.cdnHostname}/${videoId}/video.mp4`,
+//         directPlayUrl: `https://player.mediadelivery.net/play/${this.libraryId}/${videoId}`,
+//         thumbnailUrl: `https://${this.cdnHostname}/${videoId}/thumbnail.jpg`,
+//         status: isReady ? "ready" : "processing",
 //       };
-      
 //     } catch (error) {
-//       console.error("\n❌ ERROR: Video upload failed");
-//       console.error(`   ${error.message}`);
-//       if (error.response) {
-//         console.error(`   Status: ${error.response.status}`);
-//         console.error(`   Data:`, JSON.stringify(error.response.data, null, 2));
-//       }
-      
-//       if (videoId) {
-//         await this.deleteVideo(videoId).catch(() => {});
-//       }
-      
-//       return null;
+//       console.error("❌ Video Upload Error:", error.response?.data || error.message);
+//       throw new Error("Video upload failed");
 //     }
 //   }
 
+//   // ================= IMAGE UPLOAD =================
 //   async uploadImage(fileBuffer, fileName, mimeType) {
 //     try {
-//       console.log(`📸 Uploading image: ${fileName}`);
-//       const url = `https://storage.bunnycdn.com/${this.libraryId}/${fileName}`;
-      
-//       await axios.put(url, fileBuffer, {
-//         headers: { 
-//           AccessKey: this.apiKey, 
-//           "Content-Type": mimeType 
+//       console.log("\n📸 Uploading image...");
+
+//       const safeName = `${Date.now()}_${fileName.replace(/\s+/g, "_")}`;
+
+//       const storageUrl = `https://storage.bunnycdn.com/${this.storageZone}/${safeName}`;
+
+//       await axios.put(storageUrl, fileBuffer, {
+//         headers: {
+//           AccessKey: this.storagePassword,
+//           "Content-Type": mimeType,
 //         },
 //         maxBodyLength: Infinity,
-//         maxContentLength: Infinity
+//         maxContentLength: Infinity,
 //       });
-      
-//       const imageUrl = `https://${this.cdnHostname}/${fileName}`;
-//       console.log(`   ✅ Image uploaded: ${imageUrl}`);
+
+//       // ✅ FIX: सही CDN use
+//       const imageUrl = `https://${this.storageZone}.b-cdn.net/${safeName}`;
+
+//       console.log("✅ Image Uploaded:", imageUrl);
+
 //       return {
 //         url: imageUrl,
-//         publicId: fileName
+//         publicId: safeName,
 //       };
 //     } catch (error) {
-//       console.error(`❌ Image upload error: ${error.message}`);
-//       return null;
+//       console.error("❌ Image Upload Error:", error.response?.data || error.message);
+//       throw new Error("Image upload failed");
 //     }
 //   }
 
+//   // ================= DELETE VIDEO =================
 //   async deleteVideo(videoId) {
 //     try {
 //       await axios.delete(`${this.baseUrl}/videos/${videoId}`, {
-//         headers: this.getHeaders()
+//         headers: {
+//           AccessKey: this.videoApiKey,
+//         },
 //       });
-//       console.log(`🗑️ Video deleted: ${videoId}`);
-//       return { success: true };
+//       console.log("🗑️ Video Deleted:", videoId);
 //     } catch (error) {
-//       console.error(`❌ Delete error: ${error.message}`);
-//       return { success: false };
+//       console.error("❌ Delete Error:", error.message);
 //     }
-//   }
-
-//   sleep(ms) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
 //   }
 // }
 
 // module.exports = new BunnyCdnService();
+
 const axios = require("axios");
 
 class BunnyCdnService {
   constructor() {
-    this.apiKey = process.env.BUNNY_API_KEY;
-    this.libraryId = process.env.BUNNY_LIBRARY_ID;
-    this.cdnHostname = process.env.BUNNY_CDN_HOSTNAME;
+    this.videoApiKey      = process.env.BUNNY_VIDEO_API_KEY;
+    this.storagePassword  = process.env.BUNNY_STORAGE_PASSWORD;
+    this.libraryId        = process.env.BUNNY_LIBRARY_ID;
+    this.cdnHostname      = process.env.BUNNY_CDN_HOSTNAME;  // video CDN hostname
+    this.storageZone      = process.env.BUNNY_STORAGE_ZONE;  // image storage zone name
+
     this.baseUrl = `https://video.bunnycdn.com/library/${this.libraryId}`;
-    
-    console.log("\n╔════════════════════════════════════════════╗");
-    console.log("║     🐰 BUNNY CDN SERVICE INITIALIZED     ║");
-    console.log("╠════════════════════════════════════════════╣");
-    console.log(`║ Library ID: ${this.libraryId}`);
-    console.log(`║ CDN Hostname: ${this.cdnHostname}`);
-    console.log(`║ API Key: ${this.apiKey ? this.apiKey.substring(0, 8) + '...' : 'MISSING'}`);
-    console.log("╚════════════════════════════════════════════╝\n");
+
+    console.log("\n🐰 Bunny CDN Initialized");
+    console.log("Library:", this.libraryId);
+    console.log("Storage Zone:", this.storageZone);
   }
 
-  getHeaders() {
-    return { 
-      AccessKey: this.apiKey,
-      "Content-Type": "application/json"
-    };
+  // ─── Video status ────────────────────────────────────────────────────────
+  async getVideoStatus(videoId) {
+    try {
+      const res = await axios.get(`${this.baseUrl}/videos/${videoId}`, {
+        headers: { AccessKey: this.videoApiKey },
+      });
+      return res.data;
+    } catch (error) {
+      console.error("❌ Status Error:", error.message);
+      return null;
+    }
   }
 
+  // ─── Upload video (shared by main movie AND trailer) ─────────────────────
   async uploadVideo(fileBuffer, fileName, mimeType) {
     let videoId = null;
-    
+
     try {
-      console.log("\n📹 STEP 1: Creating video entry in Bunny CDN...");
-      const createRes = await axios.post(`${this.baseUrl}/videos`, {
-        title: fileName.replace(/\.[^/.]+$/, ""),
-        collectionId: null,
-        enableTtl: false
-      }, { headers: this.getHeaders() });
+      console.log("\n📹 Creating video entry...");
 
-      videoId = createRes.data.guid;
-      console.log(`   ✅ Video created! ID: ${videoId}`);
-
-      console.log("\n📤 STEP 2: Uploading video file...");
-      await axios.put(
-        `https://video.bunnycdn.com/library/${this.libraryId}/videos/${videoId}`,
-        fileBuffer,
+      const createRes = await axios.post(
+        `${this.baseUrl}/videos`,
+        { title: fileName.replace(/\.[^/.]+$/, "") },
         {
-          headers: { 
-            AccessKey: this.apiKey, 
-            "Content-Type": mimeType 
+          headers: {
+            AccessKey: this.videoApiKey,
+            "Content-Type": "application/json",
           },
-          maxBodyLength: Infinity,
-          maxContentLength: Infinity,
-          timeout: 300000
         }
       );
-      console.log("   ✅ Upload complete!");
 
-      console.log("\n⏳ STEP 3: Waiting for transcoding...");
-      let videoInfo = null;
+      videoId = createRes.data.guid;
+      console.log("✅ Video ID:", videoId);
+
+      console.log("📤 Uploading video bytes...");
+      await axios.put(`${this.baseUrl}/videos/${videoId}`, fileBuffer, {
+        headers: {
+          AccessKey: this.videoApiKey,
+          "Content-Type": mimeType,
+        },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+      });
+
+      // ── Wait for Bunny encoding (max 20 × 5 s = 100 s) ────────────────
+      console.log("⏳ Waiting for encoding...");
+      let isReady = false;
       let attempts = 0;
-      const maxAttempts = 40;
-      
-      while (attempts < maxAttempts) {
-        await this.sleep(3000);
-        
-        const infoRes = await axios.get(`${this.baseUrl}/videos/${videoId}`, {
-          headers: this.getHeaders()
-        });
-        videoInfo = infoRes.data;
-        
-        const statusMap = {0:"New",1:"Queued",2:"Processing",3:"Ready ✅",4:"Failed",5:"Error"};
-        console.log(`   Status: ${statusMap[videoInfo.status]} (${attempts + 1}/${maxAttempts})`);
-        
-        if (videoInfo.status === 3) {
-          console.log("   ✅ Transcoding complete!");
-          break;
+
+      while (!isReady && attempts < 20) {
+        const video = await this.getVideoStatus(videoId);
+        if (video && video.status === 4) {
+          isReady = true;
+          console.log("✅ Video is ready for streaming!");
+        } else {
+          attempts++;
+          console.log(`⏳ Encoding... attempt ${attempts}/20`);
+          await new Promise((r) => setTimeout(r, 5000));
         }
-        
-        attempts++;
       }
 
-      console.log("\n🎬 STEP 4: Generating stream URLs...");
-      const hlsUrl = `https://${this.cdnHostname}/${videoId}/playlist.m3u8`;
-      const mp4Url = `https://${this.cdnHostname}/${videoId}/video.mp4`;
-      const thumbnailUrl = `https://${this.cdnHostname}/${videoId}/thumbnail.jpg`;
-      const directPlayUrl = `https://player.mediadelivery.net/play/${this.libraryId}/${videoId}`;
-
-      console.log("\n╔════════════════════════════════════════════╗");
-      console.log("║     🎬 VIDEO STREAM URLs GENERATED       ║");
-      console.log("╠════════════════════════════════════════════╣");
-      console.log(`║ HLS: ${hlsUrl}`);
-      console.log(`║ MP4: ${mp4Url}`);
-      console.log(`║ Direct Play: ${directPlayUrl}`);
-      console.log(`║ Thumbnail: ${thumbnailUrl}`);
-      console.log("╚════════════════════════════════════════════╝\n");
+      if (!isReady) {
+        console.warn("⚠️ Video not fully ready yet, but continuing...");
+      }
 
       return {
         videoId,
-        url: hlsUrl,
-        hlsUrl,
-        mp4Url,
-        directPlayUrl,
-        thumbnailUrl,
-        duration: videoInfo?.length || 0,
-        size: fileBuffer.length,
-        status: videoInfo?.status || 3
+        hlsUrl:        `https://${this.cdnHostname}/${videoId}/playlist.m3u8`,
+        mp4Url:        `https://${this.cdnHostname}/${videoId}/video.mp4`,
+        directPlayUrl: `https://player.mediadelivery.net/play/${this.libraryId}/${videoId}`,
+        thumbnailUrl:  `https://${this.cdnHostname}/${videoId}/thumbnail.jpg`,
+        status:        isReady ? "ready" : "processing",
       };
-      
     } catch (error) {
-      console.error("\n❌ ERROR: Video upload failed");
-      console.error(`   ${error.message}`);
-      if (error.response) {
-        console.error(`   Status: ${error.response.status}`);
-        console.error(`   Data:`, JSON.stringify(error.response.data, null, 2));
-      }
-      
-      if (videoId) {
-        await this.deleteVideo(videoId).catch(() => {});
-      }
-      
-      return null;
+      console.error("❌ Video Upload Error:", error.response?.data || error.message);
+      throw new Error("Video upload failed");
     }
   }
 
+  // ─── Upload image ────────────────────────────────────────────────────────
   async uploadImage(fileBuffer, fileName, mimeType) {
     try {
-      console.log(`📸 Uploading image: ${fileName}`);
-      const url = `https://storage.bunnycdn.com/${this.libraryId}/${fileName}`;
-      
-      await axios.put(url, fileBuffer, {
-        headers: { 
-          AccessKey: this.apiKey, 
-          "Content-Type": mimeType 
+      console.log("\n📸 Uploading image:", fileName);
+      const safeName   = `${Date.now()}_${fileName.replace(/\s+/g, "_")}`;
+      const storageUrl = `https://storage.bunnycdn.com/${this.storageZone}/${safeName}`;
+
+      await axios.put(storageUrl, fileBuffer, {
+        headers: {
+          AccessKey: this.storagePassword,
+          "Content-Type": mimeType,
         },
         maxBodyLength: Infinity,
-        maxContentLength: Infinity
+        maxContentLength: Infinity,
       });
-      
-      const imageUrl = `https://${this.cdnHostname}/${fileName}`;
-      console.log(`   ✅ Image uploaded: ${imageUrl}`);
-      return {
-        url: imageUrl,
-        publicId: fileName
-      };
+
+      const imageUrl = `https://${this.storageZone}.b-cdn.net/${safeName}`;
+      console.log("✅ Image uploaded:", imageUrl);
+      return { url: imageUrl, publicId: safeName };
     } catch (error) {
-      console.error(`❌ Image upload error: ${error.message}`);
-      return null;
+      console.error("❌ Image Upload Error:", error.response?.data || error.message);
+      throw new Error("Image upload failed");
     }
   }
 
+  // ─── Delete video ────────────────────────────────────────────────────────
   async deleteVideo(videoId) {
     try {
       await axios.delete(`${this.baseUrl}/videos/${videoId}`, {
-        headers: this.getHeaders()
+        headers: { AccessKey: this.videoApiKey },
       });
-      console.log(`🗑️ Video deleted: ${videoId}`);
-      return { success: true };
+      console.log("🗑️ Video deleted:", videoId);
     } catch (error) {
-      console.error(`❌ Delete error: ${error.message}`);
-      return { success: false };
+      console.error("❌ Delete video error:", error.message);
     }
   }
 
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  // ─── Delete image ────────────────────────────────────────────────────────
+  async deleteImage(publicId) {
+    try {
+      const url = `https://storage.bunnycdn.com/${this.storageZone}/${publicId}`;
+      await axios.delete(url, {
+        headers: { AccessKey: this.storagePassword },
+      });
+      console.log("🗑️ Image deleted:", publicId);
+    } catch (error) {
+      console.error("❌ Delete image error:", error.message);
+    }
   }
 }
 
