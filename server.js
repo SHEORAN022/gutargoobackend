@@ -170,6 +170,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const bannerRoutes = require("./routes/bannerRoutes");
 const subCategoryRoutes = require("./routes/subCategoryRoutes");
 const bannerPublicRoutes = require("./routes/bannerPublicRoutes");
+const homeSectionRoutes = require("./routes/homeSectionRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
@@ -178,6 +179,10 @@ app.use("/api/category", categoryRoutes);
 app.use("/api/banners", bannerRoutes); 
 app.use("/api/subCategory", subCategoryRoutes);
 app.use("/api/public/banner", bannerPublicRoutes);
+app.use("/api", homeSectionRoutes);
+const publicSectionRoutes = require("./routes/publicSectionRoutes");
+
+app.use("/api/public", publicSectionRoutes);
 // Health Check
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running" });
