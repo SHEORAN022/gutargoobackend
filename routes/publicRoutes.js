@@ -1,10 +1,48 @@
+
+
 // const express = require("express");
 // const router = express.Router();
 // const Movie = require("../models/Movie");
 
-// // ============================================
-// // PUBLIC API ROUTES - NO AUTHENTICATION REQUIRED
-// // ============================================
+// const formatCrew = (movie) => {
+//   const roles = ["director", "producer", "writer", "musicDirector", "cinematographer", "editor"];
+//   let crew = [];
+
+//   roles.forEach((role) => {
+//     if (movie[role]) {
+//       movie[role].forEach((p) => {
+//         crew.push({
+//           role,
+//           name: p.name,
+//           imageUrl: p.imageUrl,
+//         });
+//       });
+//     }
+//   });
+
+//   return crew;
+// };
+
+// const formatMovie = (movie) => {
+//   const obj = movie.toObject ? movie.toObject() : movie;
+
+//   const crew = formatCrew(obj);
+//   const cast = [...(obj.castMembers || [])];
+
+//   delete obj.director;
+//   delete obj.producer;
+//   delete obj.writer;
+//   delete obj.musicDirector;
+//   delete obj.cinematographer;
+//   delete obj.editor;
+//   delete obj.castMembers;
+
+//   return {
+//     ...obj,
+//     crew,
+//     // cast,
+//   };
+// };
 
 // // ✅ 1. Get all published movies
 // router.get("/movies", async (req, res) => {
@@ -26,7 +64,8 @@
     
 //     res.json({
 //       success: true,
-//       data: movies,
+//       // data: movies,
+//       data: movies.map(movie => formatMovie(movie)),
 //       pagination: {
 //         page: parseInt(page),
 //         limit: parseInt(limit),
@@ -56,7 +95,8 @@
 //     movie.viewCount += 1;
 //     await movie.save();
     
-//     res.json({ success: true, data: movie });
+//     // res.json({ success: true, data: movie });
+//     res.json({ success: true, data: formatMovie(movie) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -73,7 +113,8 @@
 //     .limit(10)
 //     .sort({ viewCount: -1 });
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -90,7 +131,8 @@
 //     .limit(20)
 //     .sort({ releaseYear: -1 });
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -108,7 +150,8 @@
 //     .sort({ releaseYear: -1, createdAt: -1 })
 //     .limit(limit);
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -126,7 +169,8 @@
 //     .sort({ viewCount: -1 })
 //     .limit(limit);
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -259,7 +303,8 @@
 //       { $sample: { size: limit } }
 //     ]);
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -279,7 +324,8 @@
 //     .limit(limit)
 //     .sort({ viewCount: -1 });
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -299,7 +345,8 @@
 //     .limit(limit)
 //     .sort({ releaseYear: -1 });
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -319,7 +366,8 @@
 //     .limit(limit)
 //     .sort({ releaseYear: -1 });
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -339,7 +387,8 @@
 //     .limit(limit)
 //     .sort({ releaseYear: -1 });
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -359,7 +408,8 @@
 //     .limit(limit)
 //     .sort({ releaseYear: -1 });
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -431,7 +481,8 @@
 //     .sort({ viewCount: -1 })
 //     .select("movieTitle tagline description genres releaseYear duration imdbRating verticalPoster horizontalBanner movieFileUrl customVideoUrl");
     
-//     res.json({ success: true, data: movies });
+//     // res.json({ success: true, data: movies });
+//     res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
 //   } catch (error) {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
@@ -467,9 +518,12 @@
 
 // module.exports = router;
 
+
+
 const express = require("express");
 const router = express.Router();
 const Movie = require("../models/Movie");
+const SubCategory = require("../models/SubCategory");
 
 const formatCrew = (movie) => {
   const roles = ["director", "producer", "writer", "musicDirector", "cinematographer", "editor"];
@@ -507,7 +561,7 @@ const formatMovie = (movie) => {
   return {
     ...obj,
     crew,
-    // cast,
+    //cast,
   };
 };
 
@@ -544,6 +598,39 @@ router.get("/movies", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+// router.get("/movies", async (req, res) => {
+//   try {
+//     const { page = 1, limit = 20, sortBy = "-createdAt" } = req.query;
+//     const { categoryId, subCategoryId } = req.query;
+
+//     let filter = {};
+
+//     if (categoryId) filter.categoryId = categoryId;
+//     if (subCategoryId) filter.subCategoryId = subCategoryId;
+
+//     const movies = await Movie.find(filter)
+//       .populate("subCategoryId", "name")
+//       .sort(sortBy)
+//       .limit(parseInt(limit))
+//       .skip((parseInt(page) - 1) * parseInt(limit));
+
+//     const total = await Movie.countDocuments(filter);
+
+//     res.json({
+//       success: true,
+//       data: movies.map(movie => formatMovie(movie)),
+//       pagination: {
+//         page: parseInt(page),
+//         limit: parseInt(limit),
+//         total,
+//         totalPages: Math.ceil(total / parseInt(limit))
+//       }
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// });
 
 // ✅ 2. Get single movie by ID
 router.get("/movies/:id", async (req, res) => {
@@ -568,6 +655,38 @@ router.get("/movies/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+router.get("/banners", async (req, res) => {
+  try {
+    const banners = await Banner.find({ isActive: true })
+      .populate("categoryId", "name")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data: banners,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+// subcategory
+
+// router.get("/subcategory/:id", async (req, res) => {
+//   try {
+//     const movies = await Movie.find({
+//       subCategoryId: req.params.id,
+//       publishStatus: true,
+//       publishDate: { $lte: new Date() }
+//     })
+//     .populate("subCategoryId", "name")
+//     .sort({ createdAt: -1 });
+
+//     res.json({ success: true, data: movies.map(m => formatMovie(m)) });
+
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// });
 
 // ✅ 3. Get featured movies
 router.get("/featured", async (req, res) => {
