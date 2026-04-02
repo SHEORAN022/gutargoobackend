@@ -152,6 +152,30 @@ const bannerSchema = new mongoose.Schema(
       enum: ["U", "U/A 7+", "U/A 13+", "U/A 16+", "A"],
       default: "U",
     },
+    // 🔹 MOVIE DETAILS
+movieUrl: {
+  type: String,
+  default: "",
+},
+
+trailerUrl: {
+  type: String,
+  default: "",
+},
+
+// 🔹 GENRES
+genres: {
+  type: [String],
+  default: [],
+},
+
+// 🔹 IMDB RATING
+imdbRating: {
+  type: Number,
+  min: 0,
+  max: 10,
+  default: 0,
+},
 
     // 🔹 WHERE VISIBLE
     visibleOn: {
