@@ -507,7 +507,7 @@ const formatMovie = (movie) => {
   return {
     ...obj,
     crew,
-    cast,
+    // cast,
   };
 };
 
