@@ -180,6 +180,9 @@ app.use("/api/banners", bannerRoutes);
 app.use("/api/subCategory", subCategoryRoutes);
 app.use("/api/public/banner", bannerPublicRoutes);
 app.use("/api", homeSectionRoutes);
+const publicCategoryRoutes = require("./routes/publicCategoryRoutes");
+
+app.use("/api/public", publicCategoryRoutes);
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 
 app.use("/api/public", publicSectionRoutes);
