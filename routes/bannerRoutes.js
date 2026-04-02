@@ -45,8 +45,7 @@
 // module.exports = router;
 
 
-
-const express = require("express");
+ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 
@@ -104,10 +103,10 @@ router.post(
 );
 
 // Get all banners
-router.get("/", auth, requireAdmin, getAllBanners);
+router.get("/", auth,  getAllBanners);
 
 // Get single banner
-router.get("/:id", auth, requireAdmin, getBannerById);
+router.get("/:id", auth,  getBannerById);
 
 // Update banner
 router.put(
@@ -122,9 +121,9 @@ router.put(
 );
 
 // Delete banner
-router.delete("/:id", auth, requireAdmin, deleteBanner);
+router.delete("/:id", auth,  deleteBanner);
 
 // Toggle active/inactive
-router.patch("/:id/toggle", auth, requireAdmin, toggleBannerStatus);
+router.patch("/:id/toggle", auth,  toggleBannerStatus);
 
 module.exports = router;
