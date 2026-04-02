@@ -168,6 +168,8 @@ const authRoutes = require("./routes/auth");
 const publicRoutes = require("./routes/publicRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const bannerRoutes = require("./routes/bannerRoutes");
+const subCategoryRoutes = require("./routes/subCategoryRoutes");
+const bannerPublicRoutes = require("./routes/bannerPublicRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
