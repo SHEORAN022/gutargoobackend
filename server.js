@@ -174,6 +174,7 @@ app.use("/api/movies", movieRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/category", categoryRoutes); 
 app.use("/api/banners", bannerRoutes); 
+app.use("/api/public/banner", bannerPublicRoutes);
 // Health Check
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running" });
