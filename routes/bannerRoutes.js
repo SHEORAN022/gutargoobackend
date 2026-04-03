@@ -103,10 +103,10 @@ router.post(
 );
 
 // Get all banners
-router.get("/", auth,  getAllBanners);
+router.get("/",  getAllBanners);
 
 // Get single banner
-router.get("/:id", auth,  getBannerById);
+router.get("/:id",   getBannerById);
 
 // Update banner
 router.put(
@@ -124,6 +124,6 @@ router.put(
 router.delete("/:id",   deleteBanner);
 
 // Toggle active/inactive
-router.patch("/:id/toggle", auth,  toggleBannerStatus);
+router.patch("/:id/toggle",   toggleBannerStatus);
 
 module.exports = router;
