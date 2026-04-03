@@ -93,7 +93,7 @@ router.get("/public/category/:categoryId", getBannersByCategory);
 // Create banner
 router.post(
   "/",
-  auth,
+
 
   upload.fields([
     { name: "mobileImage", maxCount: 1 },
@@ -111,8 +111,8 @@ router.get("/:id", auth,  getBannerById);
 // Update banner
 router.put(
   "/:id",
-  auth,
-  requireAdmin,
+ 
+
   upload.fields([
     { name: "mobileImage", maxCount: 1 },
     { name: "logoImage", maxCount: 1 },
@@ -121,7 +121,7 @@ router.put(
 );
 
 // Delete banner
-router.delete("/:id", auth,  deleteBanner);
+router.delete("/:id",   deleteBanner);
 
 // Toggle active/inactive
 router.patch("/:id/toggle", auth,  toggleBannerStatus);

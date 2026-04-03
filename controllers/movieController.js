@@ -23,7 +23,7 @@
 // //     console.log("========================================");
 // //     console.log("Body:", req.body);
 // //     console.log("Files:", req.files ? Object.keys(req.files) : "No files");
-
+    
 // //     const movieData = {
 // //       movieTitle: req.body.movieTitle,
 // //       tagline: req.body.tagline || "",
@@ -32,7 +32,7 @@
 // //       genres: parseArray(req.body.genres),
 // //       tags: parseArray(req.body.tags),
 // //       language: req.body.language,
-
+     
 // //       selectedLanguage: req.body.selectedLanguage || "",
 // //       duration: parseInt(req.body.duration),
 // //       ageRating: req.body.ageRating,
@@ -66,10 +66,10 @@
 // //       createdBy: req.user?.id,
 // //       customVideoUrl: req.body.customVideoUrl || "",
 // //     };
-
+    
 // //     if (req.body.publishDate) movieData.publishDate = new Date(req.body.publishDate);
 // //     if (req.body.expiryDate) movieData.expiryDate = new Date(req.body.expiryDate);
-
+    
 // //     // Handle file uploads
 // //     if (req.files) {
 // //       // Upload Logo
@@ -78,13 +78,13 @@
 // //         console.log(`\n📸 Processing LOGO:`);
 // //         console.log(`   Name: ${file.originalname}`);
 // //         console.log(`   Size: ${(file.size / 1024).toFixed(2)} KB`);
-
+        
 // //         const uploadResult = await bunnyService.uploadImage(
 // //           file.buffer,
 // //           `logo_${Date.now()}_${file.originalname}`,
 // //           file.mimetype
 // //         );
-
+        
 // //         // if (uploadResult) {
 // //         //   movieData.logo = {
 // //         //     url: uploadResult.url,
@@ -100,20 +100,20 @@
 // //   console.log(`   ✅ Logo saved`);
 // // }
 // //       }
-
+      
 // //       // Upload Horizontal Banner
 // //       if (req.files.horizontalBanner && req.files.horizontalBanner[0]) {
 // //         const file = req.files.horizontalBanner[0];
 // //         console.log(`\n📸 Processing HORIZONTAL BANNER:`);
 // //         console.log(`   Name: ${file.originalname}`);
 // //         console.log(`   Size: ${(file.size / 1024).toFixed(2)} KB`);
-
+        
 // //         const uploadResult = await bunnyService.uploadImage(
 // //           file.buffer,
 // //           `banner_${Date.now()}_${file.originalname}`,
 // //           file.mimetype
 // //         );
-
+        
 // //         // if (uploadResult) {
 // //         //   movieData.horizontalBanner = {
 // //         //     url: uploadResult.url,
@@ -129,20 +129,20 @@
 // //   };
 // // }
 // //       }
-
+      
 // //       // Upload Vertical Poster
 // //       if (req.files.verticalPoster && req.files.verticalPoster[0]) {
 // //         const file = req.files.verticalPoster[0];
 // //         console.log(`\n📸 Processing VERTICAL POSTER:`);
 // //         console.log(`   Name: ${file.originalname}`);
 // //         console.log(`   Size: ${(file.size / 1024).toFixed(2)} KB`);
-
+        
 // //         const uploadResult = await bunnyService.uploadImage(
 // //           file.buffer,
 // //           `poster_${Date.now()}_${file.originalname}`,
 // //           file.mimetype
 // //         );
-
+        
 // //         // if (uploadResult) {
 // //         //   movieData.verticalPoster = {
 // //         //     url: uploadResult.url,
@@ -158,7 +158,7 @@
 // //   };
 // // }
 // //       }
-
+      
 // //       // Upload video to Bunny CDN
 // //       if (req.files.movieFile && req.files.movieFile[0]) {
 // //         const file = req.files.movieFile[0];
@@ -166,13 +166,13 @@
 // //         console.log(`   Name: ${file.originalname}`);
 // //         console.log(`   Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`);
 // //         console.log(`   Type: ${file.mimetype}`);
-
+        
 // //         const uploadResult = await bunnyService.uploadVideo(
 // //           file.buffer,
 // //           `${Date.now()}_${file.originalname}`,
 // //           file.mimetype
 // //         );
-
+        
 // //         if (uploadResult && uploadResult.hlsUrl) {
 // //           movieData.movieFile = {
 // //             url: uploadResult.hlsUrl,
@@ -194,17 +194,17 @@
 // //         }
 // //       }
 // //     }
-
+    
 // //     const movie = await Movie.create(movieData);
-
+    
 // //     console.log("\n✅ MOVIE CREATED SUCCESSFULLY!");
 // //     console.log(`   ID: ${movie._id}`);
 // //     console.log(`   Title: ${movie.movieTitle}`);
 // //     console.log(`   Logo: ${movie.logo?.url || 'No logo'}`);
 // //     console.log(`   Video: ${movie.movieFile?.hlsUrl || 'N/A'}\n`);
-
-// //     res.status(201).json({
-// //       success: true,
+    
+// //     res.status(201).json({ 
+// //       success: true, 
 // //       message: "Movie created successfully",
 // //       data: {
 // //         ...movie.toObject(),
@@ -225,9 +225,9 @@
 // //   } catch (error) {
 // //     console.error("\n❌ ERROR CREATING MOVIE:");
 // //     console.error(`   ${error.message}\n`);
-// //     res.status(500).json({
-// //       success: false,
-// //       message: error.message
+// //     res.status(500).json({ 
+// //       success: false, 
+// //       message: error.message 
 // //     });
 // //   }
 // // };
@@ -236,7 +236,7 @@
 // // const updateMovie = async (req, res) => {
 // //   try {
 // //     console.log("Updating movie:", req.params.id);
-
+    
 // //     const updateData = { ...req.body };
 
 // //     // ✅ FIX LANGUAGE
@@ -247,16 +247,16 @@
 // //     arrayFields.forEach(field => {
 // //       if (updateData[field]) updateData[field] = parseArray(updateData[field]);
 // //     });
-
+    
 // //     const boolFields = ["publishStatus", "subscriptionRequired", "enableAds", "allowDownloads", "featuredMovie"];
 // //     boolFields.forEach(field => {
 // //       if (updateData[field] !== undefined) updateData[field] = updateData[field] === "true";
 // //     });
-
+    
 // //     if (updateData.customVideoUrl !== undefined) {
 // //       updateData.customVideoUrl = updateData.customVideoUrl;
 // //     }
-
+    
 // //     // Handle file uploads
 // //     if (req.files) {
 // //       // Upload Logo
@@ -280,7 +280,7 @@
 // //   };
 // // }
 // //       }
-
+      
 // //       // Upload Horizontal Banner
 // //       if (req.files.horizontalBanner && req.files.horizontalBanner[0]) {
 // //         const file = req.files.horizontalBanner[0];
@@ -308,7 +308,7 @@
 // //   };
 // // }
 // //       }
-
+      
 // //       // Upload Vertical Poster
 // //       if (req.files.verticalPoster && req.files.verticalPoster[0]) {
 // //         const file = req.files.verticalPoster[0];
@@ -330,22 +330,22 @@
 // //   };
 // // }
 // //       }
-
+      
 // //       // Upload Video
 // //       if (req.files.movieFile && req.files.movieFile[0]) {
 // //         const file = req.files.movieFile[0];
-
+        
 // //         const existingMovie = await Movie.findById(req.params.id);
 // //         if (existingMovie?.movieFile?.videoId) {
 // //           await bunnyService.deleteVideo(existingMovie.movieFile.videoId);
 // //         }
-
+        
 // //         const uploadResult = await bunnyService.uploadVideo(
 // //           file.buffer,
 // //           `${Date.now()}_${file.originalname}`,
 // //           file.mimetype
 // //         );
-
+        
 // //         if (uploadResult) {
 // //           updateData.movieFile = {
 // //             url: uploadResult.hlsUrl,
@@ -362,10 +362,10 @@
 // //         }
 // //       }
 // //     }
-
+    
 // //     const movie = await Movie.findByIdAndUpdate(req.params.id, updateData, { new: true });
-// //     res.json({
-// //       success: true,
+// //     res.json({ 
+// //       success: true, 
 // //       data: {
 // //         ...movie.toObject(),
 // //         // videoStreamUrl: movie.movieFile?.hlsUrl || movie.customVideoUrl,
@@ -418,12 +418,12 @@
 // //     if (!movie) {
 // //       return res.status(404).json({ success: false, message: "Movie not found" });
 // //     }
-
+    
 // //     movie.viewCount += 1;
 // //     await movie.save();
-
-// //     res.json({
-// //       success: true,
+    
+// //     res.json({ 
+// //       success: true, 
 // //       data: {
 // //         ...movie.toObject(),
 // //         // videoStreamUrl: movie.movieFile?.hlsUrl || movie.customVideoUrl,
@@ -449,11 +449,11 @@
 // // const deleteMovie = async (req, res) => {
 // //   try {
 // //     const movie = await Movie.findById(req.params.id);
-
+    
 // //     if (movie.movieFile?.videoId) {
 // //       await bunnyService.deleteVideo(movie.movieFile.videoId);
 // //     }
-
+    
 // //     await Movie.findByIdAndDelete(req.params.id);
 // //     res.json({ success: true, message: "Movie deleted successfully" });
 // //   } catch (error) {
@@ -481,20 +481,20 @@
 // //     if (!movie) {
 // //       return res.status(404).json({ success: false, message: "Movie not found" });
 // //     }
-
+    
 // //     // const streamUrl = movie.movieFile?.hlsUrl || movie.customVideoUrl;
 // //     const streamUrl =
 // //   movie.movieFile?.status === 4
 // //     ? movie.movieFile?.hlsUrl
 // //     : movie.customVideoUrl || null;
 // //     const directPlayUrl = movie.movieFile?.directPlayUrl;
-
+    
 // //     if (!streamUrl && !directPlayUrl) {
 // //       return res.status(404).json({ success: false, message: "Video not found" });
 // //     }
-
-// //     res.json({
-// //       success: true,
+    
+// //     res.json({ 
+// //       success: true, 
 // //       data: {
 // //         hlsUrl: streamUrl,
 // //         directPlayUrl: directPlayUrl,
@@ -1017,6 +1017,8 @@
 //   getVideoStreamUrl,
 // };
 
+
+
 const Movie = require("../models/Movie");
 const bunnyService = require("../services/bunnyService");
 const formatCrew = (movie) => {
@@ -1050,11 +1052,7 @@ const formatCrew = (movie) => {
 const parseArray = (data) => {
   if (!data) return [];
   if (typeof data === "string") {
-    try {
-      return JSON.parse(data);
-    } catch (e) {
-      return [];
-    }
+    try { return JSON.parse(data); } catch (e) { return []; }
   }
   return Array.isArray(data) ? data : [];
 };
@@ -1072,10 +1070,10 @@ const parsePersonArray = (data) => {
   return items.map((item) => {
     if (typeof item === "string") return { name: item };
     return {
-      name: item.name || "",
+      name:      item.name      || "",
       character: item.character || undefined,
-      imageUrl: item.imageUrl || "",
-      publicId: item.publicId || "",
+      imageUrl:  item.imageUrl  || "",
+      publicId:  item.publicId  || "",
     };
   });
 };
@@ -1089,7 +1087,7 @@ const uploadImageSafe = async (file, prefix) => {
     const result = await bunnyService.uploadImage(
       file.buffer,
       `${prefix}_${Date.now()}_${file.originalname}`,
-      file.mimetype,
+      file.mimetype
     );
     if (result && result.url.startsWith("https://")) return result;
     return null;
@@ -1153,20 +1151,19 @@ const uploadVideoBunny = async (file) => {
   const result = await bunnyService.uploadVideo(
     file.buffer,
     `${Date.now()}_${file.originalname}`,
-    file.mimetype,
+    file.mimetype
   );
-  if (!result || !result.hlsUrl)
-    throw new Error("Video upload to Bunny CDN failed");
+  if (!result || !result.hlsUrl) throw new Error("Video upload to Bunny CDN failed");
   return {
-    url: result.hlsUrl,
-    videoId: result.videoId,
-    hlsUrl: result.hlsUrl,
-    mp4Url: result.mp4Url,
+    url:           result.hlsUrl,
+    videoId:       result.videoId,
+    hlsUrl:        result.hlsUrl,
+    mp4Url:        result.mp4Url,
     directPlayUrl: result.directPlayUrl,
-    thumbnailUrl: result.thumbnailUrl,
-    duration: result.duration || 0,
-    size: file.size,
-    status: result.status === "ready" ? 4 : 2,
+    thumbnailUrl:  result.thumbnailUrl,
+    duration:      result.duration || 0,
+    size:          file.size,
+    status:        result.status === "ready" ? 4 : 2,
   };
 };
 
@@ -1177,36 +1174,29 @@ const buildResponseExtras = (movie) => ({
     movie.movieFile?.status === 4
       ? movie.movieFile?.hlsUrl
       : movie.customVideoUrl || null,
-  hlsUrl: movie.movieFile?.hlsUrl,
-  mp4Url: movie.movieFile?.mp4Url,
+  hlsUrl:        movie.movieFile?.hlsUrl,
+  mp4Url:        movie.movieFile?.mp4Url,
   directPlayUrl: movie.movieFile?.directPlayUrl,
-  thumbnailUrl: movie.movieFile?.thumbnailUrl,
+  thumbnailUrl:  movie.movieFile?.thumbnailUrl,
 
   // Trailer
   trailerStreamUrl:
     movie.trailer?.status === 4
       ? movie.trailer?.hlsUrl
       : movie.customTrailerUrl || null,
-  trailerHlsUrl: movie.trailer?.hlsUrl,
-  trailerMp4Url: movie.trailer?.mp4Url,
+  trailerHlsUrl:        movie.trailer?.hlsUrl,
+  trailerMp4Url:        movie.trailer?.mp4Url,
   trailerDirectPlayUrl: movie.trailer?.directPlayUrl,
-  trailerThumbnailUrl: movie.trailer?.thumbnailUrl,
+  trailerThumbnailUrl:  movie.trailer?.thumbnailUrl,
 
   // Images
-  logoUrl: movie.logo?.url,
-  horizontalBannerUrl: movie.horizontalBanner?.url,
-  verticalPosterUrl: movie.verticalPoster?.url,
+  logoUrl:               movie.logo?.url,
+  horizontalBannerUrl:   movie.horizontalBanner?.url,
+  verticalPosterUrl:     movie.verticalPoster?.url,
 });
 
 // ─── CREW ROLES (used for iteration) ──────────────────────────────────────────
-const CREW_ROLES = [
-  "director",
-  "producer",
-  "writer",
-  "musicDirector",
-  "cinematographer",
-  "editor",
-];
+const CREW_ROLES = ["director", "producer", "writer", "musicDirector", "cinematographer", "editor"];
 
 // ─── Controllers ──────────────────────────────────────────────────────────────
 
@@ -1227,47 +1217,45 @@ const createMovie = async (req, res) => {
     const castMembers = parsePersonArray(req.body.castMembers);
 
     const movieData = {
-      movieTitle: req.body.movieTitle,
-      tagline: req.body.tagline || "",
-      description: req.body.description,
-      fullStoryline: req.body.fullStoryline || "",
-      genres: parseArray(req.body.genres),
-      tags: parseArray(req.body.tags),
-      language: req.body.language,
-      selectedLanguage: req.body.selectedLanguage || "",
-      duration: parseInt(req.body.duration),
-      ageRating: req.body.ageRating,
-      imdbRating: parseFloat(req.body.imdbRating) || 0,
-      releaseYear: parseInt(req.body.releaseYear),
-      productionStudio: parseArray(req.body.productionStudio),
-      countryOfOrigin: parseArray(req.body.countryOfOrigin),
-      budget: req.body.budget || "",
+      movieTitle:           req.body.movieTitle,
+      tagline:              req.body.tagline              || "",
+      description:          req.body.description,
+      fullStoryline:        req.body.fullStoryline        || "",
+      genres:               parseArray(req.body.genres),
+      tags:                 parseArray(req.body.tags),
+      language:             req.body.language,
+      selectedLanguage:     req.body.selectedLanguage     || "",
+      duration:             parseInt(req.body.duration),
+      ageRating:            req.body.ageRating,
+      imdbRating:           parseFloat(req.body.imdbRating) || 0,
+      releaseYear:          parseInt(req.body.releaseYear),
+      productionStudio:     parseArray(req.body.productionStudio),
+      countryOfOrigin:      parseArray(req.body.countryOfOrigin),
+      budget:               req.body.budget               || "",
       awardsAndNominations: req.body.awardsAndNominations || "",
-      videoQuality: req.body.videoQuality || "Auto (Adaptive)",
-      audioFormat: req.body.audioFormat || "Stereo",
+      videoQuality:         req.body.videoQuality         || "Auto (Adaptive)",
+      audioFormat:          req.body.audioFormat          || "Stereo",
       ...crewData,
       castMembers,
-      audioTracks: parseArray(req.body.audioTracks),
-      subtitles: parseArray(req.body.subtitles),
-      publishStatus: req.body.publishStatus === "true",
+      audioTracks:          parseArray(req.body.audioTracks),
+      subtitles:            parseArray(req.body.subtitles),
+      publishStatus:        req.body.publishStatus        === "true",
       subscriptionRequired: req.body.subscriptionRequired === "true",
-      enableAds: req.body.enableAds === "true",
-      allowDownloads: req.body.allowDownloads === "true",
-      featuredMovie: req.body.featuredMovie === "true",
-      contentVendor: req.body.contentVendor || "Internal",
-      vendorId: req.body.vendorId || "",
-      seoTitle: req.body.seoTitle || "",
-      seoDescription: req.body.seoDescription || "",
-      seoKeywords: parseArray(req.body.seoKeywords),
-      createdBy: req.user?.id,
-      customVideoUrl: req.body.customVideoUrl || "",
-      customTrailerUrl: req.body.customTrailerUrl || "",
+      enableAds:            req.body.enableAds            === "true",
+      allowDownloads:       req.body.allowDownloads       === "true",
+      featuredMovie:        req.body.featuredMovie        === "true",
+      contentVendor:        req.body.contentVendor        || "Internal",
+      vendorId:             req.body.vendorId             || "",
+      seoTitle:             req.body.seoTitle             || "",
+      seoDescription:       req.body.seoDescription       || "",
+      seoKeywords:          parseArray(req.body.seoKeywords),
+      createdBy:            req.user?.id,
+      customVideoUrl:       req.body.customVideoUrl       || "",
+      customTrailerUrl:     req.body.customTrailerUrl     || "",
     };
 
-    if (req.body.publishDate)
-      movieData.publishDate = new Date(req.body.publishDate);
-    if (req.body.expiryDate)
-      movieData.expiryDate = new Date(req.body.expiryDate);
+    if (req.body.publishDate) movieData.publishDate = new Date(req.body.publishDate);
+    if (req.body.expiryDate)  movieData.expiryDate  = new Date(req.body.expiryDate);
 
     // ── File uploads ──────────────────────────────────────────────────────
     if (req.files) {
@@ -1277,38 +1265,27 @@ const createMovie = async (req, res) => {
       if (files.logo?.[0]) {
         console.log(`\n📸 Processing LOGO`);
         const r = await uploadImageSafe(files.logo[0], "logo");
-        if (r) {
-          movieData.logo = r;
-          console.log("   ✅ Logo saved");
-        }
+        if (r) { movieData.logo = r; console.log("   ✅ Logo saved"); }
       }
 
       // Horizontal Banner
       if (files.horizontalBanner?.[0]) {
         console.log(`\n📸 Processing HORIZONTAL BANNER`);
         const r = await uploadImageSafe(files.horizontalBanner[0], "banner");
-        if (r) {
-          movieData.horizontalBanner = r;
-          console.log("   ✅ Banner saved");
-        }
+        if (r) { movieData.horizontalBanner = r; console.log("   ✅ Banner saved"); }
       }
 
       // Vertical Poster
       if (files.verticalPoster?.[0]) {
         console.log(`\n📸 Processing VERTICAL POSTER`);
         const r = await uploadImageSafe(files.verticalPoster[0], "poster");
-        if (r) {
-          movieData.verticalPoster = r;
-          console.log("   ✅ Poster saved");
-        }
+        if (r) { movieData.verticalPoster = r; console.log("   ✅ Poster saved"); }
       }
 
       // Main Movie Video
       if (files.movieFile?.[0]) {
         const file = files.movieFile[0];
-        console.log(
-          `\n📹 Uploading MAIN VIDEO: ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)} MB)`,
-        );
+        console.log(`\n📹 Uploading MAIN VIDEO: ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
         movieData.movieFile = await uploadVideoBunny(file);
         console.log("✅ Main video uploaded:", movieData.movieFile.hlsUrl);
       }
@@ -1316,9 +1293,7 @@ const createMovie = async (req, res) => {
       // Trailer Video
       if (files.trailerFile?.[0]) {
         const file = files.trailerFile[0];
-        console.log(
-          `\n🎞️  Uploading TRAILER: ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)} MB)`,
-        );
+        console.log(`\n🎞️  Uploading TRAILER: ${file.originalname} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
         movieData.trailer = await uploadVideoBunny(file);
         console.log("✅ Trailer uploaded:", movieData.trailer.hlsUrl);
       }
@@ -1342,34 +1317,34 @@ const createMovie = async (req, res) => {
     //   message: "Movie created successfully",
     //   data: { ...movie.toObject(), ...buildResponseExtras(movie) },
     // });
-    const movieObj = movie.toObject();
+   const movieObj = movie.toObject();
 
-    // ✅ PEHLE crew & cast bana
-    // const crew = formatCrew(movieObj);
-    const crew = formatCrew(movie);
-    // const cast = movieObj.castMembers;
+// ✅ PEHLE crew & cast bana
+// const crew = formatCrew(movieObj);
+const crew = formatCrew(movie);
+// const cast = movieObj.castMembers;
 
-    const cast = [...(movieObj.castMembers || [])];
-    // ❗ PHIR delete kar
-    delete movieObj.director;
-    delete movieObj.producer;
-    delete movieObj.writer;
-    delete movieObj.musicDirector;
-    delete movieObj.cinematographer;
-    delete movieObj.editor;
-    delete movieObj.castMembers;
+const cast = [...(movieObj.castMembers || [])];
+// ❗ PHIR delete kar
+delete movieObj.director;
+delete movieObj.producer;
+delete movieObj.writer;
+delete movieObj.musicDirector;
+delete movieObj.cinematographer;
+delete movieObj.editor;
+delete movieObj.castMembers;
 
-    res.status(201).json({
-      success: true,
-      message: "Movie created successfully",
-      data: {
-        ...movieObj,
-        ...buildResponseExtras(movie),
+res.status(201).json({
+  success: true,
+  message: "Movie created successfully",
+  data: {
+    ...movieObj,
+    ...buildResponseExtras(movie),
 
-        crew,
-        cast,
-      },
-    });
+    crew,
+    cast,
+  },
+});
   } catch (error) {
     console.error("\n❌ ERROR CREATING MOVIE:", error.message);
     res.status(500).json({ success: false, message: error.message });
@@ -1385,13 +1360,8 @@ const updateMovie = async (req, res) => {
 
     // Array fields
     const arrayFields = [
-      "genres",
-      "tags",
-      "productionStudio",
-      "countryOfOrigin",
-      "audioTracks",
-      "subtitles",
-      "seoKeywords",
+      "genres", "tags", "productionStudio", "countryOfOrigin",
+      "audioTracks", "subtitles", "seoKeywords",
     ];
     arrayFields.forEach((field) => {
       if (updateData[field] !== undefined)
@@ -1408,11 +1378,8 @@ const updateMovie = async (req, res) => {
 
     // Boolean fields
     const boolFields = [
-      "publishStatus",
-      "subscriptionRequired",
-      "enableAds",
-      "allowDownloads",
-      "featuredMovie",
+      "publishStatus", "subscriptionRequired", "enableAds",
+      "allowDownloads", "featuredMovie",
     ];
     boolFields.forEach((field) => {
       if (updateData[field] !== undefined)
@@ -1452,7 +1419,7 @@ const updateMovie = async (req, res) => {
 
       // Trailer Video
       if (files.trailerFile?.[0]) {
-        const existing = existing || (await Movie.findById(req.params.id));
+        const existing = existing || await Movie.findById(req.params.id);
         if (existing?.trailer?.videoId)
           await bunnyService.deleteVideo(existing.trailer.videoId);
 
@@ -1470,45 +1437,40 @@ const updateMovie = async (req, res) => {
         await uploadCastImages(files, updateData.castMembers);
     }
 
-    const movie = await Movie.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
-    if (!movie)
-      return res
-        .status(404)
-        .json({ success: false, message: "Movie not found" });
+    const movie = await Movie.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (!movie) return res.status(404).json({ success: false, message: "Movie not found" });
 
     // res.json({
     //   success: true,
     //   data: { ...movie.toObject(), ...buildResponseExtras(movie) },
     // });
-    const movieObj = movie.toObject();
+ const movieObj = movie.toObject();
 
-    // ✅ PEHLE bana
-    // const crew = formatCrew(movieObj);
-    const crew = formatCrew(movie);
-    // const cast = movieObj.castMembers;
-    const cast = [...(movieObj.castMembers || [])];
+// ✅ PEHLE bana
+// const crew = formatCrew(movieObj);
+const crew = formatCrew(movie);
+// const cast = movieObj.castMembers;
+const cast = [...(movieObj.castMembers || [])];
 
-    // ❗ PHIR delete kar
-    delete movieObj.director;
-    delete movieObj.producer;
-    delete movieObj.writer;
-    delete movieObj.musicDirector;
-    delete movieObj.cinematographer;
-    delete movieObj.editor;
-    delete movieObj.castMembers;
+// ❗ PHIR delete kar
+delete movieObj.director;
+delete movieObj.producer;
+delete movieObj.writer;
+delete movieObj.musicDirector;
+delete movieObj.cinematographer;
+delete movieObj.editor;
+delete movieObj.castMembers;
 
-    res.json({
-      success: true,
-      data: {
-        ...movieObj,
-        ...buildResponseExtras(movie),
+res.json({
+  success: true,
+  data: {
+    ...movieObj,
+    ...buildResponseExtras(movie),
 
-        crew,
-        cast,
-      },
-    });
+    crew,
+    cast,
+  },
+});
   } catch (error) {
     console.error("Update error:", error);
     res.status(500).json({ success: false, message: error.message });
@@ -1517,63 +1479,39 @@ const updateMovie = async (req, res) => {
 
 const getMovies = async (req, res) => {
   try {
-    const { search, status, page = 1, limit = 50 } = req.query;
+    const movies = await Movie.find().sort({ createdAt: -1 });
+    // const moviesWithUrls = movies.map((movie) => ({
+    //   ...movie.toObject(),
+    //   ...buildResponseExtras(movie),
+    // }));
 
-    const filter = {};
-    if (search) {
-      filter.movieTitle = { $regex: search, $options: "i" };
-    }
-    if (status && status !== "all") {
-      filter.publishStatus = status === "published";
-    }
-    const pageNumber = parseInt(page);
-    const limitPages = parseInt(limit);
-    const skip = (pageNumber - 1) * limitPages;
-    const totalRecords = await Movie.countDocuments(filter);
+   const moviesWithUrls = movies.map((movie) => {
+  const movieObj = movie.toObject();
 
-    const movies = await Movie.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limitPages);
+  // ❗ PEHLE crew bana
+  // const crew = formatCrew(movieObj);
+  const crew = formatCrew(movie);
+  // const cast = movieObj.castMembers;
+  const cast = [...(movieObj.castMembers || [])];
 
-    const moviesWithUrls = movies.map((movie) => {
-      const movieObj = movie.toObject();
+  // ❗ PHIR delete karo
+  delete movieObj.director;
+  delete movieObj.producer;
+  delete movieObj.writer;
+  delete movieObj.musicDirector;
+  delete movieObj.cinematographer;
+  delete movieObj.editor;
+  delete movieObj.castMembers;
 
-      // ❗ PEHLE crew bana
-      // const crew = formatCrew(movieObj);
-      const crew = formatCrew(movie);
-      // const cast = movieObj.castMembers;
-      const cast = [...(movieObj.castMembers || [])];
+  return {
+    ...movieObj,
+    ...buildResponseExtras(movie),
 
-      // ❗ PHIR delete karo
-      delete movieObj.director;
-      delete movieObj.producer;
-      delete movieObj.writer;
-      delete movieObj.musicDirector;
-      delete movieObj.cinematographer;
-      delete movieObj.editor;
-      delete movieObj.castMembers;
-
-      return {
-        ...movieObj,
-        ...buildResponseExtras(movie),
-
-        crew,
-        cast,
-      };
-    });
-    res.json({
-      success: true,
-      data: moviesWithUrls,
-      pagination: {
-        totalRecords,
-        currentPage:pageNumber,
-        totalPages:Math.ceil(totalRecords/limitPages),
-        limit:limitPages
-      },
-    });
+    crew,
+    cast,
+  };
+});  res.json({ success: true, data: moviesWithUrls });
   } catch (error) {
-    console.log(error,'get the error of page here ')
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -1583,9 +1521,7 @@ const getMovieById = async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id);
     if (!movie)
-      return res
-        .status(404)
-        .json({ success: false, message: "Movie not found" });
+      return res.status(404).json({ success: false, message: "Movie not found" });
 
     movie.viewCount += 1;
     await movie.save();
@@ -1594,32 +1530,32 @@ const getMovieById = async (req, res) => {
     //   success: true,
     //   data: { ...movie.toObject(), ...buildResponseExtras(movie) },
     // });
-    const movieObj = movie.toObject();
+const movieObj = movie.toObject();
 
-    // ✅ PEHLE bana
-    // const crew = formatCrew(movieObj);
-    const crew = formatCrew(movie);
-    // const cast = movieObj.castMembers;
-    const cast = [...(movieObj.castMembers || [])];
-    // ❗ PHIR delete
-    delete movieObj.director;
-    delete movieObj.producer;
-    delete movieObj.writer;
-    delete movieObj.musicDirector;
-    delete movieObj.cinematographer;
-    delete movieObj.editor;
-    delete movieObj.castMembers;
+// ✅ PEHLE bana
+// const crew = formatCrew(movieObj);
+const crew = formatCrew(movie);
+// const cast = movieObj.castMembers;
+const cast = [...(movieObj.castMembers || [])];
+// ❗ PHIR delete
+delete movieObj.director;
+delete movieObj.producer;
+delete movieObj.writer;
+delete movieObj.musicDirector;
+delete movieObj.cinematographer;
+delete movieObj.editor;
+delete movieObj.castMembers;
 
-    res.json({
-      success: true,
-      data: {
-        ...movieObj,
-        ...buildResponseExtras(movie),
+res.json({
+  success: true,
+  data: {
+    ...movieObj,
+    ...buildResponseExtras(movie),
 
-        crew,
-        cast,
-      },
-    });
+    crew,
+    cast,
+  },
+});
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -1630,9 +1566,7 @@ const deleteMovie = async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id);
     if (!movie)
-      return res
-        .status(404)
-        .json({ success: false, message: "Movie not found" });
+      return res.status(404).json({ success: false, message: "Movie not found" });
 
     if (movie.movieFile?.videoId)
       await bunnyService.deleteVideo(movie.movieFile.videoId);
@@ -1651,9 +1585,7 @@ const togglePublish = async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id);
     if (!movie)
-      return res
-        .status(404)
-        .json({ success: false, message: "Movie not found" });
+      return res.status(404).json({ success: false, message: "Movie not found" });
 
     movie.publishStatus = !movie.publishStatus;
     if (movie.publishStatus) movie.publishDate = new Date();
@@ -1669,9 +1601,7 @@ const getVideoStreamUrl = async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id);
     if (!movie)
-      return res
-        .status(404)
-        .json({ success: false, message: "Movie not found" });
+      return res.status(404).json({ success: false, message: "Movie not found" });
 
     const streamUrl =
       movie.movieFile?.status === 4
@@ -1684,22 +1614,20 @@ const getVideoStreamUrl = async (req, res) => {
         : movie.customTrailerUrl || null;
 
     if (!streamUrl && !movie.movieFile?.directPlayUrl)
-      return res
-        .status(404)
-        .json({ success: false, message: "Video not found" });
+      return res.status(404).json({ success: false, message: "Video not found" });
 
     res.json({
       success: true,
       data: {
-        hlsUrl: streamUrl,
+        hlsUrl:        streamUrl,
         directPlayUrl: movie.movieFile?.directPlayUrl,
-        mp4Url: movie.movieFile?.mp4Url,
-        thumbnailUrl: movie.movieFile?.thumbnailUrl,
+        mp4Url:        movie.movieFile?.mp4Url,
+        thumbnailUrl:  movie.movieFile?.thumbnailUrl,
         trailer: {
-          hlsUrl: trailerStreamUrl,
+          hlsUrl:        trailerStreamUrl,
           directPlayUrl: movie.trailer?.directPlayUrl,
-          mp4Url: movie.trailer?.mp4Url,
-          thumbnailUrl: movie.trailer?.thumbnailUrl,
+          mp4Url:        movie.trailer?.mp4Url,
+          thumbnailUrl:  movie.trailer?.thumbnailUrl,
         },
       },
     });
