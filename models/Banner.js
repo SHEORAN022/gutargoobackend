@@ -5,217 +5,114 @@
 //     title: {
 //       type: String,
 //       required: true,
-//       trim: true,
 //     },
-//     description: {
-//       type: String,
-//       default: "",
-//       trim: true,
+
+//     logoImage: {
+//       url: String,
+//       publicId: String,
 //     },
-//     imageUrl: {
-//       type: String,
-//       required: true,
+
+//     bannerImage: {
+//       url: String,
+//       publicId: String,
 //     },
+
+//     // 🔥 CATEGORY LINK
 //     categoryId: {
 //       type: mongoose.Schema.Types.ObjectId,
 //       ref: "Category",
 //       required: true,
 //     },
-//     categoryName: {
-//       type: String,
-//       required: true,
-//     },
-//     link: {
-//       type: String,
-//       default: "",
-//     },
-//     order: {
-//       type: Number,
-//       default: 0,
-//     },
-//     isActive: {
+
+//     publishStatus: {
 //       type: Boolean,
 //       default: true,
-//     },
-//     createdBy: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "User",
 //     },
 //   },
 //   { timestamps: true }
 // );
 
-// // Indexes
-// bannerSchema.index({ categoryId: 1, isActive: 1, order: 1 });
-
 // module.exports = mongoose.model("Banner", bannerSchema);
+// models/Banner.js
 const mongoose = require("mongoose");
 
-/* ===== CAST SUB-SCHEMA ===== */
-const castSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    character: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-    profileImage: {
-      type: String,
-      default: "",
-    },
-  },
-  { _id: false }
-);
-
-/* ===== CREW SUB-SCHEMA ===== */
-const crewSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    role: {
-      type: String,
-      enum: [
-        "Director",
-        "Producer",
-        "Writer",
-        "Music Director",
-        "Cinematographer",
-        "Editor",
-      ],
-      required: true,
-    },
-    image: {
-      type: String,
-      default: "",
-    },
-  },
-  { _id: false }
-);
-
-/* ===== MAIN SCHEMA ===== */
 const bannerSchema = new mongoose.Schema(
   {
-    // 🔹 BASIC INFO
     title: {
       type: String,
       required: true,
-      trim: true,
     },
+    
     description: {
       type: String,
       default: "",
-      trim: true,
     },
 
-    // 🔹 IMAGES
-    mobileImage: {
-      type: String,
-      default: "",
-    },
     logoImage: {
-      type: String,
-      default: "",
+      url: String,
+      publicId: String,
     },
 
-    // 🔹 CATEGORY
+    bannerImage: {
+      url: String,
+      publicId: String,
+    },
+
+    // 🔥 CATEGORY LINK
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
 
-   
-
-    // 🔹 CAST (Embedded)
-    cast: {
-      type: [castSchema],
-      default: [],
+    // 🔥 MOVIE LINK (New field for single movie selection)
+    movieId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Movie",
+      default: null,
     },
 
-    // 🔹 CREW (Embedded)
-    crew: {
-      type: [crewSchema],
-      default: [],
-    },
+    // 🔥 MOVIES LIST (Multiple movies for carousel/featured section)
+    moviesList: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Movie",
+    }],
 
-    // 🔹 AGE LIMIT (Netflix style)
-    ageLimit: {
+    // Banner type: "single_movie" | "category_movies" | "custom_list"
+    bannerType: {
       type: String,
-      enum: ["U", "U/A 7+", "U/A 13+", "U/A 16+", "A"],
-      default: "U",
+      enum: ["single_movie", "category_movies", "custom_list"],
+      default: "category_movies",
     },
-    // 🔹 MOVIE DETAILS
-movieUrl: {
-  type: String,
-  default: "",
-},
 
-trailerUrl: {
-  type: String,
-  default: "",
-},
+    // Display settings
+    displayOrder: {
+      type: Number,
+      default: 0,
+    },
 
-// 🔹 GENRES
-genres: {
-  type: [String],
-  default: [],
-},
-
-// 🔹 IMDB RATING
-imdbRating: {
-  type: Number,
-  min: 0,
-  max: 10,
-  default: 0,
-},
-
-    // 🔹 WHERE VISIBLE
     visibleOn: {
-      type: [String],
-      enum: [
-        "home",
-        "originals",
-        "movies",
-        "tv_shows",
-        "web_series",
-        "short_movies",
-      ],
-      default: ["home"],
+      type: String,
+      enum: ["home", "category", "movie", "all"],
+      default: "home",
     },
-    // 🔹 PUBLISH CONTROL
-publishStatus: {
-  type: Boolean,
-  default: false,
-},
 
-publishDate: {
-  type: Date,
-  default: null,
-},
-
-    // 🔹 STATUS
-    isActive: {
+    publishStatus: {
       type: Boolean,
       default: true,
     },
 
-    // 🔹 CREATED BY
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
+
+// Index for better query performance
+bannerSchema.index({ publishStatus: 1, displayOrder: 1 });
+bannerSchema.index({ categoryId: 1 });
+bannerSchema.index({ movieId: 1 });
 
 module.exports = mongoose.model("Banner", bannerSchema);
