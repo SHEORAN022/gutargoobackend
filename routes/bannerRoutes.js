@@ -1,129 +1,64 @@
-
 // const express = require("express");
 // const router = express.Router();
-// const multer = require("multer");
-// const { auth, requireAdmin } = require("../middleware/authMiddleware");
+
 // const {
 //   createBanner,
-//   getAllBanners,
-//   getBannersByCategory,
-//   getHomeBanners,
+//   getBanners,
 //   getBannerById,
 //   updateBanner,
 //   deleteBanner,
-//   toggleBannerStatus,
-// } = require("../controllers/bannerController");
+// } = require("../controllers/bannerController"); // 👈 PATH CHECK
 
-// // Multer configuration for file upload
+// const { auth } = require("../middleware/authMiddleware");
+// const multer = require("multer");
+
 // const storage = multer.memoryStorage();
-// const upload = multer({
-//   storage,
-//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-//   fileFilter: (req, file, cb) => {
-//     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg", "image/gif"];
-//     if (allowedTypes.includes(file.mimetype)) {
-//       cb(null, true);
-//     } else {
-//       cb(new Error("Only JPEG, PNG, WEBP, and GIF images are allowed"));
-//     }
-//   },
-// });
 
-// // ============ PUBLIC ROUTES (No Authentication) ============
-// // ✅ These must come BEFORE admin routes to avoid 403
-// router.get("/public/home", getHomeBanners);
-// router.get("/public/category/:categoryId", getBannersByCategory);
+// const upload = multer({ storage }).fields([
+//   { name: "logoImage", maxCount: 1 },
+//   { name: "bannerImage", maxCount: 1 },
+// ]);
 
-// // ============ ADMIN ROUTES (with authentication) ============
-// router.post("/", auth, requireAdmin, upload.single("image"), createBanner);
-// router.get("/", auth, requireAdmin, getAllBanners);
-// router.get("/:id", auth, requireAdmin, getBannerById);
-// router.put("/:id", auth, requireAdmin, upload.single("image"), updateBanner);
-// router.delete("/:id", auth, requireAdmin, deleteBanner);
-// router.patch("/:id/toggle", auth, requireAdmin, toggleBannerStatus);
+// // ✅ ROUTES
+// router.post("/", auth, upload, createBanner);
+// router.get("/", getBanners);
+// router.get("/:id", getBannerById);
+// router.put("/:id", auth, upload, updateBanner);
+// router.delete("/:id", auth, deleteBanner);
 
 // module.exports = router;
 
-
- const express = require("express");
+// routes/bannerRoutes.js
+const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-
-const { auth, requireAdmin } = require("../middleware/authMiddleware");
-
+const { auth } = require("../middleware/authMiddleware");
 const {
   createBanner,
-  getAllBanners,
-  getBannersByCategory,
-  getHomeBanners,
+  getBanners,
   getBannerById,
   updateBanner,
   deleteBanner,
-  toggleBannerStatus,
+  togglePublish,
+  getMoviesForDropdown,
 } = require("../controllers/bannerController");
 
-/* ================= MULTER CONFIG ================= */
 const storage = multer.memoryStorage();
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
-    const allowed = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
-    if (allowed.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Only images allowed"));
-    }
-  },
-});
+const upload = multer({ storage }).fields([
+  { name: "logoImage", maxCount: 1 },
+  { name: "bannerImage", maxCount: 1 },
+]);
 
-/* ================= PUBLIC ROUTES ================= */
-// ⚠️ Always keep public routes above admin routes
+// Movie dropdown endpoint
+router.get("/movies-dropdown", auth, getMoviesForDropdown);
 
-// Home banners
-router.get("/public/home", getHomeBanners);
-
-// Category banners
-router.get("/public/category/:categoryId", getBannersByCategory);
-
-
-/* ================= ADMIN ROUTES ================= */
-
-// Create banner
-router.post(
-  "/",
-
-
-  upload.fields([
-    { name: "mobileImage", maxCount: 1 },
-    { name: "logoImage", maxCount: 1 },
-  ]),
-  createBanner
-);
-
-// Get all banners
-router.get("/",  getAllBanners);
-
-// Get single banner
-router.get("/:id",   getBannerById);
-
-// Update banner
-router.put(
-  "/:id",
- 
-
-  upload.fields([
-    { name: "mobileImage", maxCount: 1 },
-    { name: "logoImage", maxCount: 1 },
-  ]),
-  updateBanner
-);
-
-// Delete banner
-router.delete("/:id",   deleteBanner);
-
-// Toggle active/inactive
-router.patch("/:id/toggle",   toggleBannerStatus);
+// Banner CRUD routes
+router.post("/", auth, upload, createBanner);
+router.get("/", auth, getBanners);
+router.get("/:id", auth, getBannerById);
+router.put("/:id", auth, upload, updateBanner);
+router.delete("/:id", auth, deleteBanner);
+router.patch("/:id/toggle-publish", auth, togglePublish);
 
 module.exports = router;
