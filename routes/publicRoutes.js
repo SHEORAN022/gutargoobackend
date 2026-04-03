@@ -1,8 +1,10 @@
 
 
+
 // const express = require("express");
 // const router = express.Router();
 // const Movie = require("../models/Movie");
+// const SubCategory = require("../models/SubCategory");
 
 // const formatCrew = (movie) => {
 //   const roles = ["director", "producer", "writer", "musicDirector", "cinematographer", "editor"];
@@ -40,7 +42,7 @@
 //   return {
 //     ...obj,
 //     crew,
-//     // cast,
+//     //cast,
 //   };
 // };
 
@@ -77,6 +79,39 @@
 //     res.status(500).json({ success: false, message: error.message });
 //   }
 // });
+// // router.get("/movies", async (req, res) => {
+// //   try {
+// //     const { page = 1, limit = 20, sortBy = "-createdAt" } = req.query;
+// //     const { categoryId, subCategoryId } = req.query;
+
+// //     let filter = {};
+
+// //     if (categoryId) filter.categoryId = categoryId;
+// //     if (subCategoryId) filter.subCategoryId = subCategoryId;
+
+// //     const movies = await Movie.find(filter)
+// //       .populate("subCategoryId", "name")
+// //       .sort(sortBy)
+// //       .limit(parseInt(limit))
+// //       .skip((parseInt(page) - 1) * parseInt(limit));
+
+// //     const total = await Movie.countDocuments(filter);
+
+// //     res.json({
+// //       success: true,
+// //       data: movies.map(movie => formatMovie(movie)),
+// //       pagination: {
+// //         page: parseInt(page),
+// //         limit: parseInt(limit),
+// //         total,
+// //         totalPages: Math.ceil(total / parseInt(limit))
+// //       }
+// //     });
+
+// //   } catch (error) {
+// //     res.status(500).json({ success: false, message: error.message });
+// //   }
+// // });
 
 // // ✅ 2. Get single movie by ID
 // router.get("/movies/:id", async (req, res) => {
@@ -101,6 +136,38 @@
 //     res.status(500).json({ success: false, message: error.message });
 //   }
 // });
+// router.get("/banners", async (req, res) => {
+//   try {
+//     const banners = await Banner.find({ isActive: true })
+//       .populate("categoryId", "name")
+//       .sort({ createdAt: -1 });
+
+//     res.json({
+//       success: true,
+//       data: banners,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: err.message });
+//   }
+// });
+// // subcategory
+
+// // router.get("/subcategory/:id", async (req, res) => {
+// //   try {
+// //     const movies = await Movie.find({
+// //       subCategoryId: req.params.id,
+// //       publishStatus: true,
+// //       publishDate: { $lte: new Date() }
+// //     })
+// //     .populate("subCategoryId", "name")
+// //     .sort({ createdAt: -1 });
+
+// //     res.json({ success: true, data: movies.map(m => formatMovie(m)) });
+
+// //   } catch (error) {
+// //     res.status(500).json({ success: false, message: error.message });
+// //   }
+// // });
 
 // // ✅ 3. Get featured movies
 // router.get("/featured", async (req, res) => {
@@ -523,7 +590,6 @@
 const express = require("express");
 const router = express.Router();
 const Movie = require("../models/Movie");
-const SubCategory = require("../models/SubCategory");
 
 const formatCrew = (movie) => {
   const roles = ["director", "producer", "writer", "musicDirector", "cinematographer", "editor"];
@@ -561,76 +627,85 @@ const formatMovie = (movie) => {
   return {
     ...obj,
     crew,
-    //cast,
+    cast,
   };
 };
 
 // ✅ 1. Get all published movies
 router.get("/movies", async (req, res) => {
-  try {
-    const { page = 1, limit = 20, sortBy = "-createdAt" } = req.query;
+  // try {
+  //   const { page = 1, limit = 20, sortBy = "-createdAt" } = req.query;
     
-    const movies = await Movie.find({ 
-      publishStatus: true,
-      publishDate: { $lte: new Date() }
-    })
-    .sort(sortBy)
-    .limit(parseInt(limit))
-    .skip((parseInt(page) - 1) * parseInt(limit));
+  //   const movies = await Movie.find({ 
+  //     publishStatus: true,
+  //     publishDate: { $lte: new Date() }
+  //   })
+  //   .sort(sortBy)
+  //   .limit(parseInt(limit))
+  //   .skip((parseInt(page) - 1) * parseInt(limit));
     
-    const total = await Movie.countDocuments({ 
-      publishStatus: true,
-      publishDate: { $lte: new Date() }
-    });
+  //   const total = await Movie.countDocuments({ 
+  //     publishStatus: true,
+  //     publishDate: { $lte: new Date() }
+  //   });
     
-    res.json({
-      success: true,
-      // data: movies,
-      data: movies.map(movie => formatMovie(movie)),
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        totalPages: Math.ceil(total / parseInt(limit))
-      }
-    });
+  //   res.json({
+  //     success: true,
+  //     // data: movies,
+  //     data: movies.map(movie => formatMovie(movie)),
+  //     pagination: {
+  //       page: parseInt(page),
+  //       limit: parseInt(limit),
+  //       total,
+  //       totalPages: Math.ceil(total / parseInt(limit))
+  //     }
+  //   });
+  // } catch (error) {
+  //   res.status(500).json({ success: false, message: error.message });
+  // }
+
+    try {
+    const {type} = req.query
+    //select 
+    const movies = await Movie.find().sort({ createdAt: -1 });
+    // const moviesWithUrls = movies.map((movie) => ({
+    //   ...movie.toObject(),
+    //   ...buildResponseExtras(movie),
+    // }));
+
+   const moviesWithUrls = movies.map((movie) => {
+  const movieObj = movie.toObject();
+
+  // ❗ PEHLE crew bana
+  // const crew = formatCrew(movieObj);
+  const crew = formatCrew(movie);
+  // const cast = movieObj.castMembers;
+  const cast = [...(movieObj.castMembers || [])];
+
+  // ❗ PHIR delete karo
+  delete movieObj.director;
+  delete movieObj.producer;
+  delete movieObj.writer;
+  delete movieObj.musicDirector;
+  delete movieObj.cinematographer;
+  delete movieObj.editor;
+  delete movieObj.castMembers;
+
+  return {
+    ...movieObj,
+    ...buildResponseExtras(movie),
+
+    crew,
+    cast,
+  };
+});  res.json({ success: true, data: moviesWithUrls });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-// router.get("/movies", async (req, res) => {
-//   try {
-//     const { page = 1, limit = 20, sortBy = "-createdAt" } = req.query;
-//     const { categoryId, subCategoryId } = req.query;
 
-//     let filter = {};
 
-//     if (categoryId) filter.categoryId = categoryId;
-//     if (subCategoryId) filter.subCategoryId = subCategoryId;
 
-//     const movies = await Movie.find(filter)
-//       .populate("subCategoryId", "name")
-//       .sort(sortBy)
-//       .limit(parseInt(limit))
-//       .skip((parseInt(page) - 1) * parseInt(limit));
-
-//     const total = await Movie.countDocuments(filter);
-
-//     res.json({
-//       success: true,
-//       data: movies.map(movie => formatMovie(movie)),
-//       pagination: {
-//         page: parseInt(page),
-//         limit: parseInt(limit),
-//         total,
-//         totalPages: Math.ceil(total / parseInt(limit))
-//       }
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// });
 
 // ✅ 2. Get single movie by ID
 router.get("/movies/:id", async (req, res) => {
@@ -655,38 +730,6 @@ router.get("/movies/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-router.get("/banners", async (req, res) => {
-  try {
-    const banners = await Banner.find({ isActive: true })
-      .populate("categoryId", "name")
-      .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      data: banners,
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-// subcategory
-
-// router.get("/subcategory/:id", async (req, res) => {
-//   try {
-//     const movies = await Movie.find({
-//       subCategoryId: req.params.id,
-//       publishStatus: true,
-//       publishDate: { $lte: new Date() }
-//     })
-//     .populate("subCategoryId", "name")
-//     .sort({ createdAt: -1 });
-
-//     res.json({ success: true, data: movies.map(m => formatMovie(m)) });
-
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// });
 
 // ✅ 3. Get featured movies
 router.get("/featured", async (req, res) => {
