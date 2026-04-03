@@ -1,728 +1,578 @@
-// const Banner = require("../models/Banner");
-// const Category = require("../models/Category");
-// const bunnyService = require("../services/bunnyService");
-// const fs = require("fs");
-// const path = require("path");
+// // const Banner = require("../models/Banner");
+// // const Category = require("../models/Category");
+// // const bunnyService = require("../services/bunnyService");
+// // const fs = require("fs");
+// // const path = require("path");
 
-// // Create Banner
+// // // Create Banner
+// // exports.createBanner = async (req, res) => {
+// //   try {
+// //     console.log("\n========================================");
+// //     console.log("🎨 CREATING BANNER");
+// //     console.log("========================================");
+
+// //     const { title, description, categoryId, link, order, isActive } = req.body;
+
+// //     // Validate category
+// //     const category = await Category.findById(categoryId);
+// //     if (!category) {
+// //       return res.status(404).json({ success: false, error: "Category not found" });
+// //     }
+
+// //     // Validate title
+// //     if (!title) {
+// //       return res.status(400).json({ success: false, error: "Title is required" });
+// //     }
+
+// //     let imageUrl = "";
+
+// //     // Upload banner image to Bunny CDN
+// //     if (req.file) {
+// //       console.log("📸 Uploading banner image...");
+// //       const uploadResult = await bunnyService.uploadImage(
+// //         req.file.buffer,
+// //         `banner_${Date.now()}_${req.file.originalname}`,
+// //         req.file.mimetype
+// //       );
+// //       if (uploadResult && uploadResult.url) {
+// //         imageUrl = uploadResult.url;
+// //         console.log("✅ Image uploaded:", imageUrl);
+// //       } else {
+// //         // Fallback to local storage
+// //         const uploadDir = path.join(__dirname, "../uploads");
+// //         if (!fs.existsSync(uploadDir)) {
+// //           fs.mkdirSync(uploadDir, { recursive: true });
+// //         }
+// //         const fileName = `banner_${Date.now()}_${req.file.originalname}`;
+// //         const localPath = `/uploads/${fileName}`;
+// //         fs.writeFileSync(path.join(uploadDir, fileName), req.file.buffer);
+// //         imageUrl = `http://localhost:3001${localPath}`;
+// //         console.log("✅ Image saved locally:", imageUrl);
+// //       }
+// //     } else {
+// //       return res.status(400).json({ success: false, error: "Banner image is required" });
+// //     }
+
+// //     const bannerData = {
+// //       title,
+// //       description: description || "",
+// //       imageUrl,
+// //       categoryId,
+// //       categoryName: category.name,
+// //       link: link || "",
+// //       order: parseInt(order) || 0,
+// //       isActive: isActive === "true" || isActive === true,
+// //       createdBy: req.user?.id,
+// //     };
+
+// //     const banner = await Banner.create(bannerData);
+
+// //     console.log("✅ Banner created successfully!");
+// //     console.log("   Title:", banner.title);
+// //     console.log("   Category:", banner.categoryName);
+// //     console.log("   Image:", banner.imageUrl);
+
+// //     res.status(201).json({
+// //       success: true,
+// //       message: "Banner created successfully",
+// //       data: banner,
+// //     });
+// //   } catch (error) {
+// //     console.error("❌ Create banner error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+
+// // // Get All Banners (Admin)
+// // exports.getAllBanners = async (req, res) => {
+// //   try {
+// //     const banners = await Banner.find()
+// //       .populate("categoryId", "name")
+// //       .sort({ order: 1, createdAt: -1 });
+
+// //     res.json({ success: true, data: banners });
+// //   } catch (error) {
+// //     console.error("Get banners error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+
+// // // Get Banners by Category (Public)
+// // exports.getBannersByCategory = async (req, res) => {
+// //   try {
+// //     const { categoryId } = req.params;
+
+// //     const banners = await Banner.find({
+// //       categoryId,
+// //       isActive: true,
+// //     })
+// //       .populate("categoryId", "name")
+// //       .sort({ order: 1 });
+
+// //     res.json({ success: true, data: banners });
+// //   } catch (error) {
+// //     console.error("Get banners by category error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+
+// // // Get Active Banners for Homepage
+// // exports.getHomeBanners = async (req, res) => {
+// //   try {
+// //     const banners = await Banner.find({ isActive: true })
+// //       .populate("categoryId", "name")
+// //       .sort({ order: 1, createdAt: -1 })
+// //       .limit(10);
+
+// //     res.json({ success: true, data: banners });
+// //   } catch (error) {
+// //     console.error("Get home banners error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+
+// // // Get Single Banner
+// // exports.getBannerById = async (req, res) => {
+// //   try {
+// //     const banner = await Banner.findById(req.params.id).populate("categoryId", "name");
+
+// //     if (!banner) {
+// //       return res.status(404).json({ success: false, error: "Banner not found" });
+// //     }
+
+// //     res.json({ success: true, data: banner });
+// //   } catch (error) {
+// //     console.error("Get banner error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+
+// // // Update Banner
+// // exports.updateBanner = async (req, res) => {
+// //   try {
+// //     const { title, description, categoryId, link, order, isActive } = req.body;
+
+// //     const updateData = {
+// //       title,
+// //       description: description || "",
+// //       link: link || "",
+// //       order: parseInt(order) || 0,
+// //       isActive: isActive === "true" || isActive === true,
+// //     };
+
+// //     // Update category if changed
+// //     if (categoryId) {
+// //       const category = await Category.findById(categoryId);
+// //       if (category) {
+// //         updateData.categoryId = categoryId;
+// //         updateData.categoryName = category.name;
+// //       }
+// //     }
+
+// //     // Upload new image if provided
+// //     if (req.file) {
+// //       console.log("📸 Uploading new banner image...");
+// //       const uploadResult = await bunnyService.uploadImage(
+// //         req.file.buffer,
+// //         `banner_${Date.now()}_${req.file.originalname}`,
+// //         req.file.mimetype
+// //       );
+// //       if (uploadResult && uploadResult.url) {
+// //         updateData.imageUrl = uploadResult.url;
+// //       } else {
+// //         // Fallback to local storage
+// //         const uploadDir = path.join(__dirname, "../uploads");
+// //         if (!fs.existsSync(uploadDir)) {
+// //           fs.mkdirSync(uploadDir, { recursive: true });
+// //         }
+// //         const fileName = `banner_${Date.now()}_${req.file.originalname}`;
+// //         const localPath = `/uploads/${fileName}`;
+// //         fs.writeFileSync(path.join(uploadDir, fileName), req.file.buffer);
+// //         updateData.imageUrl = `http://localhost:3001${localPath}`;
+// //       }
+// //     }
+
+// //     const banner = await Banner.findByIdAndUpdate(req.params.id, updateData, {
+// //       new: true,
+// //     }).populate("categoryId", "name");
+
+// //     if (!banner) {
+// //       return res.status(404).json({ success: false, error: "Banner not found" });
+// //     }
+
+// //     console.log("✅ Banner updated successfully:", banner.title);
+
+// //     res.json({
+// //       success: true,
+// //       message: "Banner updated successfully",
+// //       data: banner,
+// //     });
+// //   } catch (error) {
+// //     console.error("Update banner error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+
+// // // Delete Banner
+// // exports.deleteBanner = async (req, res) => {
+// //   try {
+// //     const banner = await Banner.findByIdAndDelete(req.params.id);
+
+// //     if (!banner) {
+// //       return res.status(404).json({ success: false, error: "Banner not found" });
+// //     }
+
+// //     console.log("🗑️ Banner deleted:", banner.title);
+
+// //     res.json({ success: true, message: "Banner deleted successfully" });
+// //   } catch (error) {
+// //     console.error("Delete banner error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+
+// // // Toggle Banner Status
+// // exports.toggleBannerStatus = async (req, res) => {
+// //   try {
+// //     const banner = await Banner.findById(req.params.id);
+
+// //     if (!banner) {
+// //       return res.status(404).json({ success: false, error: "Banner not found" });
+// //     }
+
+// //     banner.isActive = !banner.isActive;
+// //     await banner.save();
+
+// //     res.json({
+// //       success: true,
+// //       message: `Banner ${banner.isActive ? "activated" : "deactivated"}`,
+// //       data: banner,
+// //     });
+// //   } catch (error) {
+// //     console.error("Toggle banner status error:", error);
+// //     res.status(500).json({ success: false, error: error.message });
+// //   }
+// // };
+// const Banner = require("../models/Banner");
+// const bunnyService = require("../services/bunnyService");
+
+// // 🔥 upload helper
+// const uploadImage = async (file, prefix) => {
+//   try {
+//     const result = await bunnyService.uploadImage(
+//       file.buffer,
+//       `${prefix}_${Date.now()}_${file.originalname}`,
+//       file.mimetype
+//     );
+
+//     return {
+//       url: result.url,
+//       publicId: result.publicId,
+//     };
+//   } catch (err) {
+//     console.log("Upload error:", err.message);
+//     return null;
+//   }
+// };
+
+// // ✅ CREATE
 // exports.createBanner = async (req, res) => {
 //   try {
-//     console.log("\n========================================");
-//     console.log("🎨 CREATING BANNER");
-//     console.log("========================================");
+//     console.log("BODY:", req.body);
+//     console.log("FILES:", req.files);
 
-//     const { title, description, categoryId, link, order, isActive } = req.body;
+//     const { title, categoryId } = req.body;
 
-//     // Validate category
-//     const category = await Category.findById(categoryId);
-//     if (!category) {
-//       return res.status(404).json({ success: false, error: "Category not found" });
+//     if (!title || !categoryId) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "title & categoryId required",
+//       });
 //     }
 
-//     // Validate title
-//     if (!title) {
-//       return res.status(400).json({ success: false, error: "Title is required" });
-//     }
-
-//     let imageUrl = "";
-
-//     // Upload banner image to Bunny CDN
-//     if (req.file) {
-//       console.log("📸 Uploading banner image...");
-//       const uploadResult = await bunnyService.uploadImage(
-//         req.file.buffer,
-//         `banner_${Date.now()}_${req.file.originalname}`,
-//         req.file.mimetype
-//       );
-//       if (uploadResult && uploadResult.url) {
-//         imageUrl = uploadResult.url;
-//         console.log("✅ Image uploaded:", imageUrl);
-//       } else {
-//         // Fallback to local storage
-//         const uploadDir = path.join(__dirname, "../uploads");
-//         if (!fs.existsSync(uploadDir)) {
-//           fs.mkdirSync(uploadDir, { recursive: true });
-//         }
-//         const fileName = `banner_${Date.now()}_${req.file.originalname}`;
-//         const localPath = `/uploads/${fileName}`;
-//         fs.writeFileSync(path.join(uploadDir, fileName), req.file.buffer);
-//         imageUrl = `http://localhost:3001${localPath}`;
-//         console.log("✅ Image saved locally:", imageUrl);
-//       }
-//     } else {
-//       return res.status(400).json({ success: false, error: "Banner image is required" });
-//     }
-
-//     const bannerData = {
+//     let data = {
 //       title,
-//       description: description || "",
-//       imageUrl,
 //       categoryId,
-//       categoryName: category.name,
-//       link: link || "",
-//       order: parseInt(order) || 0,
-//       isActive: isActive === "true" || isActive === true,
-//       createdBy: req.user?.id,
 //     };
 
-//     const banner = await Banner.create(bannerData);
+//     // logo upload
+//     if (req.files?.logoImage?.[0]) {
+//       const logo = await uploadImage(req.files.logoImage[0], "logo");
+//       if (logo) data.logoImage = logo;
+//     }
 
-//     console.log("✅ Banner created successfully!");
-//     console.log("   Title:", banner.title);
-//     console.log("   Category:", banner.categoryName);
-//     console.log("   Image:", banner.imageUrl);
+//     // banner upload
+//     if (req.files?.bannerImage?.[0]) {
+//       const banner = await uploadImage(req.files.bannerImage[0], "banner");
+//       if (banner) data.bannerImage = banner;
+//     }
+
+//     const banner = await Banner.create(data);
 
 //     res.status(201).json({
 //       success: true,
 //       message: "Banner created successfully",
 //       data: banner,
 //     });
-//   } catch (error) {
-//     console.error("❌ Create banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
+//   } catch (err) {
+//     console.error("Create error:", err);
+//     res.status(500).json({
+//       success: false,
+//       message: err.message,
+//     });
 //   }
 // };
 
-// // Get All Banners (Admin)
-// exports.getAllBanners = async (req, res) => {
+// // ✅ GET ALL (with category + movies)
+// exports.getBanners = async (req, res) => {
 //   try {
-//     const banners = await Banner.find()
-//       .populate("categoryId", "name")
-//       .sort({ order: 1, createdAt: -1 });
+//     const banners = await Banner.aggregate([
+//       { $match: { publishStatus: true } },
 
-//     res.json({ success: true, data: banners });
-//   } catch (error) {
-//     console.error("Get banners error:", error);
-//     res.status(500).json({ success: false, error: error.message });
+//       {
+//         $lookup: {
+//           from: "categories",
+//           localField: "categoryId",
+//           foreignField: "_id",
+//           as: "category",
+//         },
+//       },
+
+//       {
+//         $lookup: {
+//           from: "movies",
+//           let: { catId: "$categoryId" },
+//           pipeline: [
+//             {
+//               $match: {
+//                 $expr: {
+//                   $eq: ["$categoryId", "$$catId"],
+//                 },
+//               },
+//             },
+//             { $limit: 10 },
+//           ],
+//           as: "movies",
+//         },
+//       },
+
+//       {
+//         $project: {
+//           title: 1,
+//           logoImage: 1,
+//           bannerImage: 1,
+//           category: { $arrayElemAt: ["$category", 0] },
+//           movies: 1,
+//         },
+//       },
+//     ]);
+
+//     res.json({
+//       success: true,
+//       data: banners,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: err.message });
 //   }
 // };
 
-// // Get Banners by Category (Public)
-// exports.getBannersByCategory = async (req, res) => {
-//   try {
-//     const { categoryId } = req.params;
-
-//     const banners = await Banner.find({
-//       categoryId,
-//       isActive: true,
-//     })
-//       .populate("categoryId", "name")
-//       .sort({ order: 1 });
-
-//     res.json({ success: true, data: banners });
-//   } catch (error) {
-//     console.error("Get banners by category error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Get Active Banners for Homepage
-// exports.getHomeBanners = async (req, res) => {
-//   try {
-//     const banners = await Banner.find({ isActive: true })
-//       .populate("categoryId", "name")
-//       .sort({ order: 1, createdAt: -1 })
-//       .limit(10);
-
-//     res.json({ success: true, data: banners });
-//   } catch (error) {
-//     console.error("Get home banners error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Get Single Banner
+// // ✅ GET SINGLE
 // exports.getBannerById = async (req, res) => {
 //   try {
-//     const banner = await Banner.findById(req.params.id).populate("categoryId", "name");
+//     const banner = await Banner.findById(req.params.id).populate("categoryId");
 
 //     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
+//       return res.status(404).json({
+//         success: false,
+//         message: "Banner not found",
+//       });
 //     }
 
 //     res.json({ success: true, data: banner });
-//   } catch (error) {
-//     console.error("Get banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: err.message });
 //   }
 // };
 
-// // Update Banner
+// // ✅ UPDATE
 // exports.updateBanner = async (req, res) => {
 //   try {
-//     const { title, description, categoryId, link, order, isActive } = req.body;
+//     let updateData = {};
 
-//     const updateData = {
-//       title,
-//       description: description || "",
-//       link: link || "",
-//       order: parseInt(order) || 0,
-//       isActive: isActive === "true" || isActive === true,
-//     };
+//     if (req.body.title) updateData.title = req.body.title;
+//     if (req.body.categoryId) updateData.categoryId = req.body.categoryId;
 
-//     // Update category if changed
-//     if (categoryId) {
-//       const category = await Category.findById(categoryId);
-//       if (category) {
-//         updateData.categoryId = categoryId;
-//         updateData.categoryName = category.name;
-//       }
+//     if (req.files?.logoImage?.[0]) {
+//       const logo = await uploadImage(req.files.logoImage[0], "logo");
+//       if (logo) updateData.logoImage = logo;
 //     }
 
-//     // Upload new image if provided
-//     if (req.file) {
-//       console.log("📸 Uploading new banner image...");
-//       const uploadResult = await bunnyService.uploadImage(
-//         req.file.buffer,
-//         `banner_${Date.now()}_${req.file.originalname}`,
-//         req.file.mimetype
-//       );
-//       if (uploadResult && uploadResult.url) {
-//         updateData.imageUrl = uploadResult.url;
-//       } else {
-//         // Fallback to local storage
-//         const uploadDir = path.join(__dirname, "../uploads");
-//         if (!fs.existsSync(uploadDir)) {
-//           fs.mkdirSync(uploadDir, { recursive: true });
-//         }
-//         const fileName = `banner_${Date.now()}_${req.file.originalname}`;
-//         const localPath = `/uploads/${fileName}`;
-//         fs.writeFileSync(path.join(uploadDir, fileName), req.file.buffer);
-//         updateData.imageUrl = `http://localhost:3001${localPath}`;
-//       }
+//     if (req.files?.bannerImage?.[0]) {
+//       const banner = await uploadImage(req.files.bannerImage[0], "banner");
+//       if (banner) updateData.bannerImage = banner;
 //     }
 
-//     const banner = await Banner.findByIdAndUpdate(req.params.id, updateData, {
-//       new: true,
-//     }).populate("categoryId", "name");
-
-//     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
-//     }
-
-//     console.log("✅ Banner updated successfully:", banner.title);
+//     const banner = await Banner.findByIdAndUpdate(
+//       req.params.id,
+//       updateData,
+//       { new: true }
+//     );
 
 //     res.json({
 //       success: true,
-//       message: "Banner updated successfully",
+//       message: "Banner updated",
 //       data: banner,
 //     });
-//   } catch (error) {
-//     console.error("Update banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: err.message });
 //   }
 // };
 
-// // Delete Banner
+// // ✅ DELETE
 // exports.deleteBanner = async (req, res) => {
 //   try {
-//     const banner = await Banner.findByIdAndDelete(req.params.id);
-
-//     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
-//     }
-
-//     console.log("🗑️ Banner deleted:", banner.title);
-
-//     res.json({ success: true, message: "Banner deleted successfully" });
-//   } catch (error) {
-//     console.error("Delete banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Toggle Banner Status
-// exports.toggleBannerStatus = async (req, res) => {
-//   try {
-//     const banner = await Banner.findById(req.params.id);
-
-//     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
-//     }
-
-//     banner.isActive = !banner.isActive;
-//     await banner.save();
+//     await Banner.findByIdAndDelete(req.params.id);
 
 //     res.json({
 //       success: true,
-//       message: `Banner ${banner.isActive ? "activated" : "deactivated"}`,
-//       data: banner,
+//       message: "Banner deleted",
 //     });
-//   } catch (error) {
-//     console.error("Toggle banner status error:", error);
-//     res.status(500).json({ success: false, error: error.message });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: err.message });
 //   }
 // };
 
-
-
-
-// const Banner = require("../models/Banner");
-// const Category = require("../models/Category");
-// const bunnyService = require("../services/bunnyService");
-// const fs = require("fs");
-// const path = require("path");
-
-// // Create Banner
-// exports.createBanner = async (req, res) => {
-//   try {
-//     console.log("\n========================================");
-//     console.log("🎨 CREATING BANNER");
-//     console.log("========================================");
-
-//     const { title, description, categoryId, link, order, isActive } = req.body;
-
-//     // Validate category
-//     const category = await Category.findById(categoryId);
-//     if (!category) {
-//       return res.status(404).json({ success: false, error: "Category not found" });
-//     }
-
-//     // Validate title
-//     if (!title) {
-//       return res.status(400).json({ success: false, error: "Title is required" });
-//     }
-
-//     let imageUrl = "";
-
-//     // Upload banner image to Bunny CDN
-//     if (req.file) {
-//       console.log("📸 Uploading banner image...");
-//       const uploadResult = await bunnyService.uploadImage(
-//         req.file.buffer,
-//         `banner_${Date.now()}_${req.file.originalname}`,
-//         req.file.mimetype
-//       );
-//       if (uploadResult && uploadResult.url) {
-//         imageUrl = uploadResult.url;
-//         console.log("✅ Image uploaded:", imageUrl);
-//       } else {
-//         // Fallback to local storage
-//         const uploadDir = path.join(__dirname, "../uploads");
-//         if (!fs.existsSync(uploadDir)) {
-//           fs.mkdirSync(uploadDir, { recursive: true });
-//         }
-//         const fileName = `banner_${Date.now()}_${req.file.originalname}`;
-//         const localPath = `/uploads/${fileName}`;
-//         fs.writeFileSync(path.join(uploadDir, fileName), req.file.buffer);
-//         imageUrl = `http://localhost:3001${localPath}`;
-//         console.log("✅ Image saved locally:", imageUrl);
-//       }
-//     } else {
-//       return res.status(400).json({ success: false, error: "Banner image is required" });
-//     }
-
-//     const bannerData = {
-//       title,
-//       description: description || "",
-//       imageUrl,
-//       categoryId,
-//       categoryName: category.name,
-//       link: link || "",
-//       order: parseInt(order) || 0,
-//       isActive: isActive === "true" || isActive === true,
-//       createdBy: req.user?.id,
-//     };
-
-//     const banner = await Banner.create(bannerData);
-
-//     console.log("✅ Banner created successfully!");
-//     console.log("   Title:", banner.title);
-//     console.log("   Category:", banner.categoryName);
-//     console.log("   Image:", banner.imageUrl);
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Banner created successfully",
-//       data: banner,
-//     });
-//   } catch (error) {
-//     console.error("❌ Create banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Get All Banners (Admin)
-// exports.getAllBanners = async (req, res) => {
-//   try {
-//     const banners = await Banner.find()
-//       .populate("categoryId", "name")
-//       .sort({ order: 1, createdAt: -1 });
-
-//     res.json({ success: true, data: banners });
-//   } catch (error) {
-//     console.error("Get banners error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Get Banners by Category (Public)
-// exports.getBannersByCategory = async (req, res) => {
-//   try {
-//     const { categoryId } = req.params;
-
-//     const banners = await Banner.find({
-//       categoryId,
-//       isActive: true,
-//     })
-//       .populate("categoryId", "name")
-//       .sort({ order: 1 });
-
-//     res.json({ success: true, data: banners });
-//   } catch (error) {
-//     console.error("Get banners by category error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Get Active Banners for Homepage
-// exports.getHomeBanners = async (req, res) => {
-//   try {
-//     const banners = await Banner.find({ isActive: true })
-//       .populate("categoryId", "name")
-//       .sort({ order: 1, createdAt: -1 })
-//       .limit(10);
-
-//     res.json({ success: true, data: banners });
-//   } catch (error) {
-//     console.error("Get home banners error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Get Single Banner
-// exports.getBannerById = async (req, res) => {
-//   try {
-//     const banner = await Banner.findById(req.params.id).populate("categoryId", "name");
-
-//     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
-//     }
-
-//     res.json({ success: true, data: banner });
-//   } catch (error) {
-//     console.error("Get banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Update Banner
-// exports.updateBanner = async (req, res) => {
-//   try {
-//     const { title, description, categoryId, link, order, isActive } = req.body;
-
-//     const updateData = {
-//       title,
-//       description: description || "",
-//       link: link || "",
-//       order: parseInt(order) || 0,
-//       isActive: isActive === "true" || isActive === true,
-//     };
-
-//     // Update category if changed
-//     if (categoryId) {
-//       const category = await Category.findById(categoryId);
-//       if (category) {
-//         updateData.categoryId = categoryId;
-//         updateData.categoryName = category.name;
-//       }
-//     }
-
-//     // Upload new image if provided
-//     if (req.file) {
-//       console.log("📸 Uploading new banner image...");
-//       const uploadResult = await bunnyService.uploadImage(
-//         req.file.buffer,
-//         `banner_${Date.now()}_${req.file.originalname}`,
-//         req.file.mimetype
-//       );
-//       if (uploadResult && uploadResult.url) {
-//         updateData.imageUrl = uploadResult.url;
-//       } else {
-//         // Fallback to local storage
-//         const uploadDir = path.join(__dirname, "../uploads");
-//         if (!fs.existsSync(uploadDir)) {
-//           fs.mkdirSync(uploadDir, { recursive: true });
-//         }
-//         const fileName = `banner_${Date.now()}_${req.file.originalname}`;
-//         const localPath = `/uploads/${fileName}`;
-//         fs.writeFileSync(path.join(uploadDir, fileName), req.file.buffer);
-//         updateData.imageUrl = `http://localhost:3001${localPath}`;
-//       }
-//     }
-
-//     const banner = await Banner.findByIdAndUpdate(req.params.id, updateData, {
-//       new: true,
-//     }).populate("categoryId", "name");
-
-//     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
-//     }
-
-//     console.log("✅ Banner updated successfully:", banner.title);
-
-//     res.json({
-//       success: true,
-//       message: "Banner updated successfully",
-//       data: banner,
-//     });
-//   } catch (error) {
-//     console.error("Update banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Delete Banner
-// exports.deleteBanner = async (req, res) => {
-//   try {
-//     const banner = await Banner.findByIdAndDelete(req.params.id);
-
-//     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
-//     }
-
-//     console.log("🗑️ Banner deleted:", banner.title);
-
-//     res.json({ success: true, message: "Banner deleted successfully" });
-//   } catch (error) {
-//     console.error("Delete banner error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-// // Toggle Banner Status
-// exports.toggleBannerStatus = async (req, res) => {
-//   try {
-//     const banner = await Banner.findById(req.params.id);
-
-//     if (!banner) {
-//       return res.status(404).json({ success: false, error: "Banner not found" });
-//     }
-
-//     banner.isActive = !banner.isActive;
-//     await banner.save();
-
-//     res.json({
-//       success: true,
-//       message: `Banner ${banner.isActive ? "activated" : "deactivated"}`,
-//       data: banner,
-//     });
-//   } catch (error) {
-//     console.error("Toggle banner status error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
-
-
-
-
+// controllers/bannerController.js
 const Banner = require("../models/Banner");
+const Movie = require("../models/Movie");
 const Category = require("../models/Category");
 const bunnyService = require("../services/bunnyService");
-const parseField = (field) => {
-  if (!field) return [];
 
-  if (Array.isArray(field)) return field;
-
+// 🔥 upload helper
+const uploadImage = async (file, prefix) => {
   try {
-    return JSON.parse(field);
+    const result = await bunnyService.uploadImage(
+      file.buffer,
+      `${prefix}_${Date.now()}_${file.originalname}`,
+      file.mimetype
+    );
+
+    return {
+      url: result.url,
+      publicId: result.publicId,
+    };
   } catch (err) {
-    return [];
+    console.log("Upload error:", err.message);
+    return null;
   }
 };
-/* ================= CREATE ================= */
+
+// ✅ CREATE BANNER
 exports.createBanner = async (req, res) => {
   try {
-    // const {
-    //   title,
-    //   description,
-    //   categoryId,
-    //   cast,
-    //   crew,
-    //   ageLimit,
-    //   visibleOn,
-    //   isActive,
-    // } = req.body;
-    const {
-  title,
-  description,
-  categoryId,
-  cast,
-  crew,
-  ageLimit,
-  visibleOn,
-  isActive,
-  movieUrl,
-  trailerUrl,
-  genres,
-  imdbRating
-} = req.body;
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+
+    const { 
+      title, 
+      description,
+      categoryId, 
+      movieId,
+      moviesList,
+      bannerType,
+      displayOrder,
+      visibleOn
+    } = req.body;
 
     if (!title || !categoryId) {
       return res.status(400).json({
         success: false,
-        message: "Title and Category required",
+        message: "Title & categoryId are required",
       });
     }
 
-    const category = await Category.findById(categoryId);
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
+    let data = {
+      title,
+      description: description || "",
+      categoryId,
+      bannerType: bannerType || "category_movies",
+      displayOrder: parseInt(displayOrder) || 0,
+      visibleOn: visibleOn || "home",
+      createdBy: req.user?.id,
+    };
+
+    // Handle movie selection based on banner type
+    if (bannerType === "single_movie" && movieId) {
+      data.movieId = movieId;
     }
 
-    let mobileImage = "";
-    let logoImage = "";
-
-    /* IMAGE UPLOAD */
-    if (req.files?.mobileImage) {
-      const file = req.files.mobileImage[0];
-      const upload = await bunnyService.uploadImage(
-        file.buffer,
-        `banner/mobile_${Date.now()}_${file.originalname}`,
-        file.mimetype
-      );
-      mobileImage = upload?.url || "";
+    if (bannerType === "custom_list" && moviesList) {
+      // Parse moviesList if it's a string (from form-data)
+      const parsedMoviesList = typeof moviesList === 'string' 
+        ? JSON.parse(moviesList) 
+        : moviesList;
+      data.moviesList = parsedMoviesList;
     }
 
-    if (req.files?.logoImage) {
-      const file = req.files.logoImage[0];
-      const upload = await bunnyService.uploadImage(
-        file.buffer,
-        `banner/logo_${Date.now()}_${file.originalname}`,
-        file.mimetype
-      );
-      logoImage = upload?.url || "";
+    // logo upload
+    if (req.files?.logoImage?.[0]) {
+      const logo = await uploadImage(req.files.logoImage[0], "logo");
+      if (logo) data.logoImage = logo;
     }
-    const banner = await Banner.create({
-  title,
-  description,
-  categoryId,
-  cast: parseField(cast),
-  crew: parseField(crew),
-  ageLimit,
-  visibleOn: visibleOn ? JSON.parse(visibleOn) : ["home"],
-  isActive: isActive !== undefined ? isActive : true,
-  mobileImage,
-  logoImage,
 
-  // ✅ NEW FIELDS
-  movieUrl,
-  trailerUrl,
-  // genres: genres ? JSON.parse(genres) : [],
-  genres: Array.isArray(genres)
-  ? genres
-  : typeof genres === "string"
-    ? genres.split(",")
-    : [],
-  imdbRating,
+    // banner upload
+    if (req.files?.bannerImage?.[0]) {
+      const banner = await uploadImage(req.files.bannerImage[0], "banner");
+      if (banner) data.bannerImage = banner;
+    }
 
-  createdBy: req.user?.id,
-});
-    
+    const banner = await Banner.create(data);
 
-//     const banner = await Banner.create({
-//       title,
-//       description,
-//       categoryId,
-//       cast: parseField(cast),
-// crew: parseField(crew),
-//       // cast: cast ? JSON.parse(cast) : [],
-//       // crew: crew ? JSON.parse(crew) : [],
-//       ageLimit,
-//       visibleOn: visibleOn ? JSON.parse(visibleOn) : ["home"],
-//       isActive: isActive !== undefined ? isActive : true,
-//       mobileImage,
-//       logoImage,
-//       createdBy: req.user?.id,
-//     });
-    const bannerData = banner.toObject();
+    // Populate the response
+    const populatedBanner = await Banner.findById(banner._id)
+      .populate("categoryId", "name slug")
+      .populate("movieId", "movieTitle posterImage verticalPoster")
+      .populate("moviesList", "movieTitle posterImage verticalPoster releaseYear");
 
-// ✅ cast + crew merge into cast
-bannerData.cast = [
-  ...(banner.cast || []),
-  ...(banner.crew || [])
-];
-
-// ❌ crew hata de
-delete bannerData.crew;
-
-res.status(201).json({
-  success: true,
-  message: "Banner created",
-  data: bannerData,
-});
-
-    // res.status(201).json({
-    //   success: true,
-    //   message: "Banner created",
-    //   data: banner,
-    // });
+    res.status(201).json({
+      success: true,
+      message: "Banner created successfully",
+      data: populatedBanner,
+    });
   } catch (err) {
-    console.error("CREATE ERROR:", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Create error:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-
-/* ================= GET ALL ================= */
-exports.getAllBanners = async (req, res) => {
+// ✅ GET ALL BANNERS (Admin)
+exports.getBanners = async (req, res) => {
   try {
-    const data = await Banner.find()
-      .populate("categoryId", "name")
-      .sort({ createdAt: -1 });
+    const banners = await Banner.find()
+      .populate("categoryId", "name slug")
+      .populate("movieId", "movieTitle posterImage verticalPoster releaseYear")
+      .populate("moviesList", "movieTitle posterImage verticalPoster releaseYear imdbRating")
+      .sort({ displayOrder: 1, createdAt: -1 });
 
-    res.json({ success: true, data });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-
-/* ================= HOME ================= */
-exports.getHomeBanners = async (req, res) => {
-  try {
-    const data = await Banner.find({
-      isActive: true,
-      visibleOn: "home",
-    })
-      .populate("categoryId", "name")
-      .sort({ createdAt: -1 });
-
-    res.json({ success: true, data });
+    res.json({
+      success: true,
+      data: banners,
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-
-/* ================= CATEGORY ================= */
-exports.getBannersByCategory = async (req, res) => {
-  try {
-    const data = await Banner.find({
-      categoryId: req.params.categoryId,
-      isActive: true,
-    })
-      .populate("categoryId", "name")
-      .sort({ createdAt: -1 });
-
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-
-/* ================= SINGLE ================= */
+// ✅ GET SINGLE BANNER
 exports.getBannerById = async (req, res) => {
   try {
-    const banner = await Banner.findById(req.params.id).populate(
-      "categoryId",
-      "name"
-    );
+    const banner = await Banner.findById(req.params.id)
+      .populate("categoryId", "name slug")
+      .populate("movieId", "movieTitle posterImage verticalPoster releaseYear duration imdbRating")
+      .populate("moviesList", "movieTitle posterImage verticalPoster releaseYear duration imdbRating");
 
     if (!banner) {
       return res.status(404).json({
@@ -737,62 +587,54 @@ exports.getBannerById = async (req, res) => {
   }
 };
 
-
-/* ================= UPDATE ================= */
+// ✅ UPDATE BANNER
 exports.updateBanner = async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      categoryId,
-      cast,
-      crew,
-      ageLimit,
-      visibleOn,
-      isActive,
-    } = req.body;
+    let updateData = {};
 
-    const updateData = {
-      title,
-      description,
-      categoryId,
-      ageLimit,
-      isActive,
-    };
-if (movieUrl) updateData.movieUrl = movieUrl;
-if (trailerUrl) updateData.trailerUrl = trailerUrl;
-if (genres) updateData.genres = JSON.parse(genres);
-if (imdbRating) updateData.imdbRating = imdbRating;
-    if (cast) updateData.cast = JSON.parse(cast);
-    if (crew) updateData.crew = JSON.parse(crew);
-    if (visibleOn) updateData.visibleOn = JSON.parse(visibleOn);
+    // Basic fields
+    if (req.body.title) updateData.title = req.body.title;
+    if (req.body.description !== undefined) updateData.description = req.body.description;
+    if (req.body.categoryId) updateData.categoryId = req.body.categoryId;
+    if (req.body.bannerType) updateData.bannerType = req.body.bannerType;
+    if (req.body.displayOrder !== undefined) updateData.displayOrder = parseInt(req.body.displayOrder);
+    if (req.body.visibleOn) updateData.visibleOn = req.body.visibleOn;
+    if (req.body.publishStatus !== undefined) updateData.publishStatus = req.body.publishStatus === "true" || req.body.publishStatus === true;
 
-    /* IMAGE UPDATE */
-    if (req.files?.mobileImage) {
-      const file = req.files.mobileImage[0];
-      const upload = await bunnyService.uploadImage(
-        file.buffer,
-        `banner/mobile_${Date.now()}_${file.originalname}`,
-        file.mimetype
-      );
-      updateData.mobileImage = upload?.url;
+    // Handle movie selection based on banner type
+    if (req.body.bannerType === "single_movie" && req.body.movieId) {
+      updateData.movieId = req.body.movieId;
+      updateData.moviesList = [];
+    } else if (req.body.bannerType === "custom_list" && req.body.moviesList) {
+      const parsedMoviesList = typeof req.body.moviesList === 'string' 
+        ? JSON.parse(req.body.moviesList) 
+        : req.body.moviesList;
+      updateData.moviesList = parsedMoviesList;
+      updateData.movieId = null;
+    } else if (req.body.bannerType === "category_movies") {
+      updateData.movieId = null;
+      updateData.moviesList = [];
     }
 
-    if (req.files?.logoImage) {
-      const file = req.files.logoImage[0];
-      const upload = await bunnyService.uploadImage(
-        file.buffer,
-        `banner/logo_${Date.now()}_${file.originalname}`,
-        file.mimetype
-      );
-      updateData.logoImage = upload?.url;
+    // Image uploads
+    if (req.files?.logoImage?.[0]) {
+      const logo = await uploadImage(req.files.logoImage[0], "logo");
+      if (logo) updateData.logoImage = logo;
+    }
+
+    if (req.files?.bannerImage?.[0]) {
+      const banner = await uploadImage(req.files.bannerImage[0], "banner");
+      if (banner) updateData.bannerImage = banner;
     }
 
     const banner = await Banner.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true }
-    ).populate("categoryId", "name");
+    )
+      .populate("categoryId", "name slug")
+      .populate("movieId", "movieTitle posterImage verticalPoster")
+      .populate("moviesList", "movieTitle posterImage verticalPoster releaseYear");
 
     if (!banner) {
       return res.status(404).json({
@@ -803,17 +645,16 @@ if (imdbRating) updateData.imdbRating = imdbRating;
 
     res.json({
       success: true,
-      message: "Banner updated",
+      message: "Banner updated successfully",
       data: banner,
     });
   } catch (err) {
-    console.error("UPDATE ERROR:", err);
+    console.error("Update error:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-
-/* ================= DELETE ================= */
+// ✅ DELETE BANNER
 exports.deleteBanner = async (req, res) => {
   try {
     const banner = await Banner.findByIdAndDelete(req.params.id);
@@ -825,15 +666,17 @@ exports.deleteBanner = async (req, res) => {
       });
     }
 
-    res.json({ success: true, message: "Banner deleted" });
+    res.json({
+      success: true,
+      message: "Banner deleted successfully",
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-
-/* ================= TOGGLE ================= */
-exports.toggleBannerStatus = async (req, res) => {
+// ✅ TOGGLE PUBLISH STATUS
+exports.togglePublish = async (req, res) => {
   try {
     const banner = await Banner.findById(req.params.id);
 
@@ -844,15 +687,62 @@ exports.toggleBannerStatus = async (req, res) => {
       });
     }
 
-    banner.isActive = !banner.isActive;
+    banner.publishStatus = !banner.publishStatus;
     await banner.save();
 
     res.json({
       success: true,
-      message: `Banner ${banner.isActive ? "activated" : "deactivated"}`,
+      message: `Banner ${banner.publishStatus ? "published" : "unpublished"}`,
       data: banner,
     });
   } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ✅ GET MOVIES FOR DROPDOWN (API endpoint)
+exports.getMoviesForDropdown = async (req, res) => {
+  try {
+    const { search, categoryId, limit = 50 } = req.query;
+    
+    let query = { publishStatus: true };
+    
+    // Filter by publish date
+    query.publishDate = { $lte: new Date() };
+    
+    // Search by title
+    if (search) {
+      query.movieTitle = { $regex: search, $options: "i" };
+    }
+    
+    // Filter by category
+    if (categoryId) {
+      query.categoryId = categoryId;
+    }
+    
+    const movies = await Movie.find(query)
+      .select("movieTitle posterImage verticalPoster releaseYear imdbRating duration")
+      .sort({ movieTitle: 1 })
+      .limit(parseInt(limit));
+    
+    // Format for dropdown
+    const formattedMovies = movies.map(movie => ({
+      _id: movie._id,
+      title: movie.movieTitle,
+      poster: movie.posterImage?.url || movie.verticalPoster?.url,
+      releaseYear: movie.releaseYear,
+      imdbRating: movie.imdbRating,
+      duration: movie.duration,
+      label: `${movie.movieTitle} (${movie.releaseYear || "N/A"})`,
+      value: movie._id
+    }));
+    
+    res.json({
+      success: true,
+      data: formattedMovies,
+    });
+  } catch (err) {
+    console.error("Error fetching movies:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
