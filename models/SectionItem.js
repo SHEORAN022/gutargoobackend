@@ -45,14 +45,13 @@ const sectionItemSchema = new mongoose.Schema(
       enum: ["movies", "web_series", "tv_shows", "short_movies"],
       required: true,
     },
-<<<<<<< HEAD
 
-=======
-categoryId: {
+
+
+    categoryId: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "Category"
 },
->>>>>>> 0ae6b69712cacb775221b9a27225705777fede1d
     contentId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

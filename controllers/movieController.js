@@ -1479,6 +1479,7 @@ res.json({
 
 const getMovies = async (req, res) => {
   try {
+    const {type} = req.query
     const movies = await Movie.find().sort({ createdAt: -1 });
     // const moviesWithUrls = movies.map((movie) => ({
     //   ...movie.toObject(),
@@ -1510,7 +1511,20 @@ const getMovies = async (req, res) => {
     crew,
     cast,
   };
-});  res.json({ success: true, data: moviesWithUrls });
+
+
+
+}); 
+if(type==="select"){
+  const onlyName = moviesWithUrls?.map((item)=>({name:item?.name,_id:item?.name}))
+  res.json({ success: true, data: onlyName });
+
+}
+else{
+res.json({ success: true, data: moviesWithUrls });
+
+}
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
