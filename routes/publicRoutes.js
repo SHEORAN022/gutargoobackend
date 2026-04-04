@@ -2,42 +2,121 @@ const express = require("express");
 const router = express.Router();
 const Movie = require("../models/Movie");
 
-// ============================================
-// PUBLIC API ROUTES - NO AUTHENTICATION REQUIRED
-// ============================================
+const formatCrew = (movie) => {
+  const roles = ["director", "producer", "writer", "musicDirector", "cinematographer", "editor"];
+  let crew = [];
+
+  roles.forEach((role) => {
+    if (movie[role]) {
+      movie[role].forEach((p) => {
+        crew.push({
+          role,
+          name: p.name,
+          imageUrl: p.imageUrl,
+        });
+      });
+    }
+  });
+
+  return crew;
+};
+
+const formatMovie = (movie) => {
+  const obj = movie.toObject ? movie.toObject() : movie;
+
+  const crew = formatCrew(obj);
+  const cast = [...(obj.castMembers || [])];
+
+  delete obj.director;
+  delete obj.producer;
+  delete obj.writer;
+  delete obj.musicDirector;
+  delete obj.cinematographer;
+  delete obj.editor;
+  delete obj.castMembers;
+
+  return {
+    ...obj,
+    crew,
+    cast,
+  };
+};
 
 // ✅ 1. Get all published movies
 router.get("/movies", async (req, res) => {
-  try {
-    const { page = 1, limit = 20, sortBy = "-createdAt" } = req.query;
+  // try {
+  //   const { page = 1, limit = 20, sortBy = "-createdAt" } = req.query;
     
-    const movies = await Movie.find({ 
-      publishStatus: true,
-      publishDate: { $lte: new Date() }
-    })
-    .sort(sortBy)
-    .limit(parseInt(limit))
-    .skip((parseInt(page) - 1) * parseInt(limit));
+  //   const movies = await Movie.find({ 
+  //     publishStatus: true,
+  //     publishDate: { $lte: new Date() }
+  //   })
+  //   .sort(sortBy)
+  //   .limit(parseInt(limit))
+  //   .skip((parseInt(page) - 1) * parseInt(limit));
     
-    const total = await Movie.countDocuments({ 
-      publishStatus: true,
-      publishDate: { $lte: new Date() }
-    });
+  //   const total = await Movie.countDocuments({ 
+  //     publishStatus: true,
+  //     publishDate: { $lte: new Date() }
+  //   });
     
-    res.json({
-      success: true,
-      data: movies,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        totalPages: Math.ceil(total / parseInt(limit))
-      }
-    });
+  //   res.json({
+  //     success: true,
+  //     // data: movies,
+  //     data: movies.map(movie => formatMovie(movie)),
+  //     pagination: {
+  //       page: parseInt(page),
+  //       limit: parseInt(limit),
+  //       total,
+  //       totalPages: Math.ceil(total / parseInt(limit))
+  //     }
+  //   });
+  // } catch (error) {
+  //   res.status(500).json({ success: false, message: error.message });
+  // }
+
+    try {
+    const {type} = req.query
+    //select 
+    const movies = await Movie.find().sort({ createdAt: -1 });
+    // const moviesWithUrls = movies.map((movie) => ({
+    //   ...movie.toObject(),
+    //   ...buildResponseExtras(movie),
+    // }));
+
+   const moviesWithUrls = movies.map((movie) => {
+  const movieObj = movie.toObject();
+
+  // ❗ PEHLE crew bana
+  // const crew = formatCrew(movieObj);
+  const crew = formatCrew(movie);
+  // const cast = movieObj.castMembers;
+  const cast = [...(movieObj.castMembers || [])];
+
+  // ❗ PHIR delete karo
+  delete movieObj.director;
+  delete movieObj.producer;
+  delete movieObj.writer;
+  delete movieObj.musicDirector;
+  delete movieObj.cinematographer;
+  delete movieObj.editor;
+  delete movieObj.castMembers;
+
+  return {
+    ...movieObj,
+    ...buildResponseExtras(movie),
+
+    crew,
+    cast,
+  };
+});  res.json({ success: true, data: moviesWithUrls });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+
+
 
 // ✅ 2. Get single movie by ID
 router.get("/movies/:id", async (req, res) => {
@@ -56,7 +135,8 @@ router.get("/movies/:id", async (req, res) => {
     movie.viewCount += 1;
     await movie.save();
     
-    res.json({ success: true, data: movie });
+    // res.json({ success: true, data: movie });
+    res.json({ success: true, data: formatMovie(movie) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -73,7 +153,8 @@ router.get("/featured", async (req, res) => {
     .limit(10)
     .sort({ viewCount: -1 });
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -90,7 +171,8 @@ router.get("/genre/:genre", async (req, res) => {
     .limit(20)
     .sort({ releaseYear: -1 });
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -108,7 +190,8 @@ router.get("/latest", async (req, res) => {
     .sort({ releaseYear: -1, createdAt: -1 })
     .limit(limit);
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -126,7 +209,8 @@ router.get("/trending", async (req, res) => {
     .sort({ viewCount: -1 })
     .limit(limit);
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -259,7 +343,8 @@ router.get("/random", async (req, res) => {
       { $sample: { size: limit } }
     ]);
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -279,7 +364,8 @@ router.get("/year/:year", async (req, res) => {
     .limit(limit)
     .sort({ viewCount: -1 });
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -299,7 +385,8 @@ router.get("/language/:language", async (req, res) => {
     .limit(limit)
     .sort({ releaseYear: -1 });
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -319,7 +406,8 @@ router.get("/agerating/:rating", async (req, res) => {
     .limit(limit)
     .sort({ releaseYear: -1 });
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -339,7 +427,8 @@ router.get("/director/:director", async (req, res) => {
     .limit(limit)
     .sort({ releaseYear: -1 });
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -359,7 +448,8 @@ router.get("/cast/:cast", async (req, res) => {
     .limit(limit)
     .sort({ releaseYear: -1 });
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -431,7 +521,8 @@ router.get("/trailers", async (req, res) => {
     .sort({ viewCount: -1 })
     .select("movieTitle tagline description genres releaseYear duration imdbRating verticalPoster horizontalBanner movieFileUrl customVideoUrl");
     
-    res.json({ success: true, data: movies });
+    // res.json({ success: true, data: movies });
+    res.json({ success: true, data: movies.map(movie => formatMovie(movie)) });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
