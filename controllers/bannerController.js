@@ -1,3 +1,6 @@
+
+
+// // controllers/bannerController.js
 // const Banner = require("../models/Banner");
 // const Movie = require("../models/Movie");
 // const Category = require("../models/Category");
@@ -303,12 +306,16 @@
 // };
 
 
+
+
+
+
 const Banner = require("../models/Banner");
-const Movie = require("../models/Movie");
-const Category = require("../models/Category");
 const bunnyService = require("../services/bunnyService");
 
-// 🔥 upload helper
+/* ============================================
+   🔥 IMAGE UPLOAD HELPER
+============================================ */
 const uploadImage = async (file, prefix) => {
   try {
     const result = await bunnyService.uploadImage(
@@ -327,23 +334,21 @@ const uploadImage = async (file, prefix) => {
   }
 };
 
-// ✅ CREATE BANNER
+/* ============================================
+   ✅ CREATE BANNER
+============================================ */
 exports.createBanner = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("FILES:", req.files);
-
     const {
       title,
       description,
       categoryId,
       movieId,
-      moviesList,
       displayOrder,
       visibleOn,
     } = req.body;
 
-    // 🔴 validation
+    // validation
     if (!title || !categoryId) {
       return res.status(400).json({
         success: false,
@@ -351,52 +356,23 @@ exports.createBanner = async (req, res) => {
       });
     }
 
-    let data = {
+    const data = {
       title,
       description: description || "",
       categoryId,
-      displayOrder: parseInt(displayOrder) || 0,
+      movieId: movieId || null, // 🔥 SINGLE MOVIE
+      displayOrder: Number(displayOrder) || 0,
       visibleOn: visibleOn || "home",
-      createdBy: req.user?.id,
+      createdBy: req.user?.id || null,
     };
 
-    // 🧠 AUTO HANDLE MOVIE LOGIC
-
-    // 🎬 SINGLE MOVIE
-    if (movieId) {
-      data.movieId = movieId;
-      data.moviesList = [];
-      data.bannerType = "single_movie";
-    }
-
-    // 🎥 MULTIPLE MOVIES
-    if (moviesList) {
-      const parsedMoviesList =
-        typeof moviesList === "string"
-          ? JSON.parse(moviesList)
-          : moviesList;
-
-      if (parsedMoviesList.length > 0) {
-        data.moviesList = parsedMoviesList;
-        data.movieId = null;
-        data.bannerType = "custom_list";
-      }
-    }
-
-    // 📂 CATEGORY BASED (DEFAULT)
-    if (!movieId && !moviesList) {
-      data.movieId = null;
-      data.moviesList = [];
-      data.bannerType = "category_movies";
-    }
-
-    // 🖼️ logo upload
+    // logo upload
     if (req.files?.logoImage?.[0]) {
       const logo = await uploadImage(req.files.logoImage[0], "logo");
       if (logo) data.logoImage = logo;
     }
 
-    // 🖼️ banner upload
+    // banner upload
     if (req.files?.bannerImage?.[0]) {
       const banner = await uploadImage(req.files.bannerImage[0], "banner");
       if (banner) data.bannerImage = banner;
@@ -404,22 +380,19 @@ exports.createBanner = async (req, res) => {
 
     const banner = await Banner.create(data);
 
-    // 🔥 populate
-    const populatedBanner = await Banner.findById(banner._id)
-      .populate("categoryId", "name slug")
-      .populate("movieId", "movieTitle posterImage verticalPoster releaseYear")
-      .populate(
-        "moviesList",
-        "movieTitle posterImage verticalPoster releaseYear imdbRating"
-      );
+    // populate
+    const result = await Banner.findById(banner._id)
+      .populate("categoryId", "name")
+      .populate("movieId", "movieTitle posterImage verticalPoster releaseYear");
 
     res.status(201).json({
       success: true,
       message: "Banner created successfully",
-      data: populatedBanner,
+      data: result,
     });
+
   } catch (err) {
-    console.error("Create error:", err);
+    console.error("CREATE ERROR:", err);
     res.status(500).json({
       success: false,
       message: err.message,
@@ -427,41 +400,39 @@ exports.createBanner = async (req, res) => {
   }
 };
 
-// ✅ GET ALL BANNERS
+/* ============================================
+   ✅ GET ALL BANNERS
+============================================ */
 exports.getBanners = async (req, res) => {
   try {
     const banners = await Banner.find()
-      .populate("categoryId", "name slug")
-      .populate(
-        "movieId",
-        "movieTitle posterImage verticalPoster releaseYear"
-      )
-      .populate(
-        "moviesList",
-        "movieTitle posterImage verticalPoster releaseYear imdbRating"
-      )
+      .populate("categoryId", "name")
+      .populate("movieId", "movieTitle posterImage verticalPoster releaseYear")
       .sort({ displayOrder: 1, createdAt: -1 });
 
     res.json({
       success: true,
       data: banners,
     });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("GET ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-// ✅ GET SINGLE BANNER
+/* ============================================
+   ✅ GET SINGLE BANNER
+============================================ */
 exports.getBannerById = async (req, res) => {
   try {
     const banner = await Banner.findById(req.params.id)
-      .populate("categoryId", "name slug")
+      .populate("categoryId", "name")
       .populate(
         "movieId",
-        "movieTitle posterImage verticalPoster releaseYear duration imdbRating"
-      )
-      .populate(
-        "moviesList",
         "movieTitle posterImage verticalPoster releaseYear duration imdbRating"
       );
 
@@ -472,63 +443,46 @@ exports.getBannerById = async (req, res) => {
       });
     }
 
-    res.json({ success: true, data: banner });
+    res.json({
+      success: true,
+      data: banner,
+    });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("GET ONE ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-// ✅ UPDATE BANNER
+/* ============================================
+   ✅ UPDATE BANNER
+============================================ */
 exports.updateBanner = async (req, res) => {
   try {
     let updateData = {};
 
-    // basic fields
     if (req.body.title) updateData.title = req.body.title;
-    if (req.body.description !== undefined)
-      updateData.description = req.body.description;
-    if (req.body.categoryId)
-      updateData.categoryId = req.body.categoryId;
-    if (req.body.displayOrder !== undefined)
-      updateData.displayOrder = parseInt(req.body.displayOrder);
-    if (req.body.visibleOn)
-      updateData.visibleOn = req.body.visibleOn;
-    if (req.body.publishStatus !== undefined)
+    if (req.body.description !== undefined) updateData.description = req.body.description;
+    if (req.body.categoryId) updateData.categoryId = req.body.categoryId;
+    if (req.body.movieId !== undefined) updateData.movieId = req.body.movieId;
+    if (req.body.displayOrder !== undefined) updateData.displayOrder = Number(req.body.displayOrder);
+    if (req.body.visibleOn) updateData.visibleOn = req.body.visibleOn;
+
+    if (req.body.publishStatus !== undefined) {
       updateData.publishStatus =
-        req.body.publishStatus === "true" ||
-        req.body.publishStatus === true;
-
-    // 🧠 AUTO HANDLE MOVIES
-
-    if (req.body.movieId) {
-      updateData.movieId = req.body.movieId;
-      updateData.moviesList = [];
-      updateData.bannerType = "single_movie";
+        req.body.publishStatus === true || req.body.publishStatus === "true";
     }
 
-    if (req.body.moviesList) {
-      const parsedMoviesList =
-        typeof req.body.moviesList === "string"
-          ? JSON.parse(req.body.moviesList)
-          : req.body.moviesList;
-
-      updateData.moviesList = parsedMoviesList;
-      updateData.movieId = null;
-      updateData.bannerType = "custom_list";
-    }
-
-    if (!req.body.movieId && !req.body.moviesList) {
-      updateData.movieId = null;
-      updateData.moviesList = [];
-      updateData.bannerType = "category_movies";
-    }
-
-    // 🖼️ image upload
+    // logo
     if (req.files?.logoImage?.[0]) {
       const logo = await uploadImage(req.files.logoImage[0], "logo");
       if (logo) updateData.logoImage = logo;
     }
 
+    // banner
     if (req.files?.bannerImage?.[0]) {
       const banner = await uploadImage(req.files.bannerImage[0], "banner");
       if (banner) updateData.bannerImage = banner;
@@ -539,12 +493,8 @@ exports.updateBanner = async (req, res) => {
       updateData,
       { new: true }
     )
-      .populate("categoryId", "name slug")
-      .populate("movieId", "movieTitle posterImage verticalPoster")
-      .populate(
-        "moviesList",
-        "movieTitle posterImage verticalPoster releaseYear"
-      );
+      .populate("categoryId", "name")
+      .populate("movieId", "movieTitle posterImage verticalPoster releaseYear");
 
     if (!banner) {
       return res.status(404).json({
@@ -558,13 +508,19 @@ exports.updateBanner = async (req, res) => {
       message: "Banner updated successfully",
       data: banner,
     });
+
   } catch (err) {
-    console.error("Update error:", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("UPDATE ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-// ✅ DELETE
+/* ============================================
+   ✅ DELETE BANNER
+============================================ */
 exports.deleteBanner = async (req, res) => {
   try {
     const banner = await Banner.findByIdAndDelete(req.params.id);
@@ -580,12 +536,19 @@ exports.deleteBanner = async (req, res) => {
       success: true,
       message: "Banner deleted successfully",
     });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("DELETE ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-// ✅ TOGGLE PUBLISH
+/* ============================================
+   ✅ TOGGLE PUBLISH
+============================================ */
 exports.togglePublish = async (req, res) => {
   try {
     const banner = await Banner.findById(req.params.id);
@@ -602,50 +565,32 @@ exports.togglePublish = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Banner ${
-        banner.publishStatus ? "published" : "unpublished"
-      }`,
+      message: `Banner ${banner.publishStatus ? "Published" : "Unpublished"}`,
       data: banner,
     });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("TOGGLE ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
-};
-
-// ✅ MOVIE DROPDOWN
-exports.getMoviesForDropdown = async (req, res) => {
+};exports.getMoviesForDropdown = async (req, res) => {
   try {
-    const { search, categoryId, limit = 50 } = req.query;
-
-    let query = { publishStatus: true };
-    query.publishDate = { $lte: new Date() };
-
-    if (search) {
-      query.movieTitle = { $regex: search, $options: "i" };
-    }
-
-    if (categoryId) {
-      query.categoryId = categoryId;
-    }
-
-    const movies = await Movie.find(query)
-      .select(
-        "movieTitle posterImage verticalPoster releaseYear imdbRating duration"
-      )
-      .sort({ movieTitle: 1 })
-      .limit(parseInt(limit));
-
-    const formattedMovies = movies.map((movie) => ({
-      _id: movie._id,
-      label: `${movie.movieTitle} (${movie.releaseYear || "N/A"})`,
-      value: movie._id,
-    }));
+    const movies = await require("../models/Movie")
+      .find()
+      .select("movieTitle")
+      .limit(50);
 
     res.json({
       success: true,
-      data: formattedMovies,
+      data: movies,
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
