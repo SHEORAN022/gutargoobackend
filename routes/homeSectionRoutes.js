@@ -8,9 +8,9 @@ const { auth,  } = require("../middleware/authMiddleware");
 router.post("/sections",   controller.createSection);
 
 router.get("/sections",   controller.getSections);
-
-router.get("/sections/:id",  controller.getSectionById);
 router.put("/sections/reorder",   controller.reorderSections);
+router.get("/sections/:id",  controller.getSectionById);
+
 
 router.put("/sections/:id",   controller.updateSection);
 
