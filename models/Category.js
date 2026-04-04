@@ -12,7 +12,7 @@ const categorySchema = new mongoose.Schema(
     categoryType: {
       type: String,
       required: true,
-      enum: ["home", "movie", "webseries", "tvshows"],
+      enum: [ "movie", "webseries", "tvshows"],
       lowercase: true,
       trim: true,
     },
