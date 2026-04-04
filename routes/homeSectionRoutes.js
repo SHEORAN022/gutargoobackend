@@ -10,6 +10,7 @@ router.post("/sections",   controller.createSection);
 router.get("/sections",   controller.getSections);
 
 router.get("/sections/:id",  controller.getSectionById);
+router.put("/sections/reorder",   controller.reorderSections);
 
 router.put("/sections/:id",   controller.updateSection);
 
@@ -17,7 +18,7 @@ router.delete("/sections/:id",   controller.deleteSection);
 
 router.patch("/sections/:id/toggle",   controller.toggleSection);
 
-router.put("/sections/reorder",   controller.reorderSections);
+
 
 /* 🌍 USER SIDE (PUBLIC) */
 router.get("/home", controller.getHomeSections);
