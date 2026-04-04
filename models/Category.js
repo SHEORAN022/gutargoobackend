@@ -6,10 +6,15 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
-    image: {
-      type: String, // image URL (future use)
-      default: "",
+
+    categoryType: {
+      type: String,
+      required: true,
+      enum: ["home", "movie", "webseries", "tvshows"],
+      lowercase: true,
+      trim: true,
     },
   },
   { timestamps: true }
