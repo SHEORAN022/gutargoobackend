@@ -96,6 +96,7 @@ app.use("/api/admin", homeSectionRoutes);
 app.use("/api/admin/section-items", sectionItemRoutes);
 app.use("/api/castAndCrew",casetAndCrewRoutes)
 app.use("/api", require("./routes/searchRoutes"));
+app.use("/api/otp", require("./routes/otpRoutes"));
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 
 app.use("/api/public", publicSectionRoutes);
