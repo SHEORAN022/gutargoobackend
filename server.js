@@ -98,7 +98,7 @@ app.use("/api", require("./routes/downloadRoutes"));
 app.use("/api", require("./routes/searchRoutes"));
 app.use("/api/otp", require("./routes/otpRoutes"));
 
-const publicSectionRoutes = require("./routes/publicSectionRoutes");
+// const publicSectionRoutes = require("./routes/publicSectionRoutes");
 const downloadRoutes = require("./routes/downloadRoutes");
 
 app.use("/api", downloadRoutes);

@@ -193,7 +193,7 @@ exports.updateBanner = async (req, res) => {
       .populate("categoryId", "name")
       .populate("movieId", "movieTitle posterImage verticalPoster releaseYear");
 
-    const banner = await Banner.findById(id);
+    // const banner = await Banner.findById(id);
     if (!banner) {
       return res.status(404).json({
         success: false,
