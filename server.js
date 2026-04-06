@@ -108,6 +108,8 @@ app.use("/api/otp", require("./routes/otpRoutes"));
 app.use("/api/customer", require("./routes/CustomerRoutes"));
 // const publicSectionRoutes = require("./routes/publicSectionRoutes");
 
+// const publicSectionRoutes = require("./routes/publicSectionRoutes");
+
 app.use("/api/public", publicSectionRoutes);
 const publicCategoryRoutes = require("./routes/publicCategoryRoutes");
 
