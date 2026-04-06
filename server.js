@@ -105,6 +105,7 @@ app.use("/api", downloadRoutes);
 app.use("/api/castAndCrew",casetAndCrewRoutes)
 app.use("/api", require("./routes/searchRoutes"));
 app.use("/api/otp", require("./routes/otpRoutes"));
+app.use("/api/customer", require("./routes/CustomerRoutes"));
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 
 app.use("/api/public", publicSectionRoutes);
