@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const movieSchema = new mongoose.Schema({
   // Basic Info
   movieTitle: { type: String, required: true },
+  
   tagline: { type: String, default: "" },
   description: { type: String, required: true },
   fullStoryline: { type: String, default: "" },
@@ -178,5 +179,12 @@ movieSchema.index({ publishStatus: 1, publishDate: 1 });
 movieSchema.index({ featuredMovie: 1 });
 movieSchema.index({ viewCount: -1 });
 movieSchema.index({ releaseYear: -1 });
+
+movieSchema.index({
+movieTitle: "text",
+description: "text",
+genres : "text",
+tags: "text",
+language: "text"})
 
 module.exports = mongoose.model("Movie", movieSchema);

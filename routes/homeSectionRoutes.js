@@ -19,7 +19,6 @@ router.delete("/sections/:id",   controller.deleteSection);
 router.patch("/sections/:id/toggle",   controller.toggleSection);
 
 
-
 /* 🌍 USER SIDE (PUBLIC) */
 router.get("/home", controller.getHomeSections);
 

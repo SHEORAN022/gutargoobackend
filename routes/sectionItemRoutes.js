@@ -48,13 +48,11 @@ router.get(
 router.delete(
   "/section-items/:id",
 
-
   controller.deleteItem
 );
 
 router.put(
   "/section-items/reorder",
-
 
   controller.reorderItems
 );

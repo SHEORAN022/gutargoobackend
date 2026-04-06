@@ -115,6 +115,10 @@ exports.getBanners = async (req, res) => {
       message: err.message,
     });
   }
+  if (urlFromBody && urlFromBody.startsWith("http")) {
+    return { url: urlFromBody, public_id: "" };
+  }
+  return { url: "", public_id: "" };
 };
 
 /* ============================================
@@ -189,6 +193,7 @@ exports.updateBanner = async (req, res) => {
       .populate("categoryId", "name")
       .populate("movieId", "movieTitle posterImage verticalPoster releaseYear");
 
+    // const banner = await Banner.findById(id);
     if (!banner) {
       return res.status(404).json({
         success: false,
@@ -199,7 +204,7 @@ exports.updateBanner = async (req, res) => {
     res.json({
       success: true,
       message: "Banner updated successfully",
-      data: banner,
+      data: updated,
     });
 
   } catch (err) {
@@ -216,8 +221,9 @@ exports.updateBanner = async (req, res) => {
 ============================================ */
 exports.deleteBanner = async (req, res) => {
   try {
-    const banner = await Banner.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
 
+    const banner = await Banner.findById(id);
     if (!banner) {
       return res.status(404).json({
         success: false,

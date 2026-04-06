@@ -31,7 +31,7 @@ const bannerSchema = new mongoose.Schema(
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      required: [true, "Category is required"],
     },
 
     // 🔥 SINGLE MOVIE ONLY

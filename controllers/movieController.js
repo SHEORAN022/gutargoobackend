@@ -460,6 +460,8 @@ res.json({
 
 const getMovies = async (req, res) => {
   try {
+    const {type} = req.query
+    //select 
     const movies = await Movie.find().sort({ createdAt: -1 });
     // const moviesWithUrls = movies.map((movie) => ({
     //   ...movie.toObject(),
