@@ -59,7 +59,7 @@ categoryId: {
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true } //asdfasdfasdf
 );
 
 module.exports = mongoose.model("SectionItem", sectionItemSchema);
