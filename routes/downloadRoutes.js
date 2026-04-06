@@ -1,10 +1,10 @@
-// routes/downloadRoutes.js
-
 const express = require("express");
 const router = express.Router();
 
-const { downloadFromBunny } = require("../controllers/downloadController");
+const { streamVideo } = require("../controllers/downloadController");
+const { auth } = require("../middleware/authMiddleware");
 
-router.get("/download/:videoId", downloadFromBunny);
+// 🔥 secure route
+router.get("/download/:videoId", auth, streamVideo);
 
 module.exports = router;
