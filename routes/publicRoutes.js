@@ -963,11 +963,11 @@ router.get("/year/:year", async (req, res) => {
 // ✅ 12. Get movies by language
 router.get("/language/:language", async (req, res) => {
   try {
-    const language = req.params.language;
+    const language = req.params.lang;
     const limit = parseInt(req.query.limit) || 20;
     
     const movies = await Movie.find({
-      language: { $regex: language, $options: "i" },
+      lang: { $regex: language, $options: "i" },
       publishStatus: true,
       publishDate: { $lte: new Date() }
     })

@@ -10,7 +10,7 @@ const movieSchema = new mongoose.Schema({
   fullStoryline: { type: String, default: "" },
   genres: { type: [String], default: [] },
   tags: { type: [String], default: [] },
-  language: { type: String, required: true },
+  lang: { type: String, required: true },
   selectedLanguage: { type: String, default: "" },
   duration: { type: Number, required: true },
   ageRating: { type: String, required: true },
@@ -172,14 +172,7 @@ movieSchema.virtual("directPlay").get(function () {
 });
 
 // ─── Indexes ─────────────────────────────────────────────────────────────────
-// movieSchema.index({ movieTitle: "text", description: "text", genres: 1 });
-movieSchema.index(
-  { movieTitle: "text", description: "text" },
-  {
-    default_language: "english",
-    language_override: "none",
-  }
-);
+movieSchema.index({ movieTitle: "text", description: "text", genres: 1 });
 movieSchema.index({ publishStatus: 1, publishDate: 1 });
 movieSchema.index({ featuredMovie: 1 });
 movieSchema.index({ viewCount: -1 });
