@@ -93,6 +93,7 @@ app.use("/api/subCategory", subCategoryRoutes);
 app.use("/api/public/banner", bannerPublicRoutes);
 app.use("/api/admin", homeSectionRoutes);
 app.use("/api/admin/section-items", sectionItemRoutes);
+app.use("/api", require("./routes/searchRoutes"));
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 
 app.use("/api/public", publicSectionRoutes);
