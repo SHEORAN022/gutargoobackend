@@ -19,15 +19,14 @@ const uploadImage = async (file, prefix) => {
 };
 exports.createCastAndCrew = async (req, res) => {
   try {
-    const { personName, role, customRole, characterName } = req.body;
+    const { personName, role, characterName } = req.body;
     let data = {
       personName,
       role,
-      customRole,
       characterName,
     };
     if (req.files?.profileImage?.[0]) {
-      const logo = await uploadImage(req.files.logoImage[0], "profile ");
+      const logo = await uploadImage(req.files.profileImage[0], "profile ");
       if (logo) data.profileImage = logo;
     }
     const castCrewData = await CastAndCrew.create(data);
@@ -38,6 +37,7 @@ exports.createCastAndCrew = async (req, res) => {
       data: castCrewData,
     });
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "Something went wrong ",
@@ -51,17 +51,18 @@ exports.getCastAndCrew = async (req, res) => {
     limit = parseInt(limit);
     const skip = (page - 1) * limit;
     const data = await CastAndCrew.find()
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+      // .skip(skip)
+      // .limit(limit)
+      // .sort({ createdAt: -1 });
     const countDocuments = await CastAndCrew.countDocuments();
     res.status(201).json({
       success: true,
+      data,
       message: "",
-      page,
-      limit,
-      total: countDocuments,
-      totalRecords: Math.ceil(total / limit),
+      // page,
+      // limit,
+      // total: countDocuments,
+      // totalRecords: Math.ceil(countDocuments / limit),
     });
   } catch (error) {
     console.log(error);
