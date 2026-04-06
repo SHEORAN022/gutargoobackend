@@ -11,7 +11,7 @@ const movieSchema = new mongoose.Schema({
   fullStoryline: { type: String, default: "" },
   genres: { type: [String], default: [] },
   tags: { type: [String], default: [] },
-  language: { type: String, required: true },
+  lang: { type: String, required: true },
   selectedLanguage: { type: String, default: "" },
   duration: { type: Number, required: true },
   ageRating: { type: String, required: true },
@@ -166,6 +166,7 @@ movieSchema.virtual("trailerStreamUrl").get(function () {
   return this.trailer?.status === 4
     ? this.trailer?.hlsUrl
     : this.customTrailerUrl || null;
+    
 });
 
 movieSchema.virtual("directPlay").get(function () {

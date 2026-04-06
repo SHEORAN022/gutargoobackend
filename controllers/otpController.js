@@ -220,6 +220,13 @@ exports.verifyOtp = async (req, res) => {
   try {
     let { mobile, otp } = req.body;
 
+    if (!mobile || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile and OTP required",
+      });
+    }
+
     if (!mobile.startsWith("91")) {
       mobile = "91" + mobile;
     }
@@ -259,14 +266,20 @@ exports.verifyOtp = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({
+    return res.json({
       success: true,
       message: "OTP Verified",
       token,
-      customer,
+      user: {
+        mobile,
+      },
     });
 
-  } catch (err) {
-    res.status(500).json({ success: false });
+  } catch (error) {
+    console.log("❌ VERIFY OTP ERROR:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Verification failed",
+    });
   }
 };
