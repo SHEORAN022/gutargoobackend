@@ -38,6 +38,9 @@ app.use("/api/public/banner", bannerPublicRoutes);
 app.use("/api/admin", homeSectionRoutes);
 app.use("/api/admin/section-items", sectionItemRoutes);
 app.use("/api", require("./routes/downloadRoutes"));
+app.use("/api", require("./routes/searchRoutes"));
+app.use("/api/otp", require("./routes/otpRoutes"));
+
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 const downloadRoutes = require("./routes/downloadRoutes");
 

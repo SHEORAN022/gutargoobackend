@@ -179,10 +179,11 @@ movieSchema.index({ featuredMovie: 1 });
 movieSchema.index({ viewCount: -1 });
 movieSchema.index({ releaseYear: -1 });
 
-module.exports = mongoose.model("Movie", movieSchema);
 movieSchema.index({
 movieTitle: "text",
 description: "text",
 genres : "text",
 tags: "text",
 language: "text"})
+
+module.exports = mongoose.model("Movie", movieSchema);
