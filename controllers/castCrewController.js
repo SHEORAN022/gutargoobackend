@@ -27,7 +27,7 @@ exports.createCastAndCrew = async (req, res) => {
       characterName,
     };
     if (req.files?.profileImage?.[0]) {
-      const logo = await uploadImage(req.files.logoImage[0], "profile ");
+      const logo = await uploadImage(req.files.profileImage[0], "profile ");
       if (logo) data.profileImage = logo;
     }
     const castCrewData = await CastAndCrew.create(data);
@@ -38,6 +38,7 @@ exports.createCastAndCrew = async (req, res) => {
       data: castCrewData,
     });
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "Something went wrong ",

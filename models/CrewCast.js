@@ -45,9 +45,12 @@ const crewSchema = new mongoose.Schema(
       default: "",
     },
 
-    profileImage: {
-      type: String,
-      default: "",
+  
+
+    
+     profileImage: {
+      url: String,
+      publicId: String,
     },
   },
   { timestamps: true }
