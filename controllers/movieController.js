@@ -1203,11 +1203,6 @@ const CREW_ROLES = ["director", "producer", "writer", "musicDirector", "cinemato
 // Create Movie
 const createMovie = async (req, res) => {
   try {
-    console.log("\n========================================");
-    console.log("🎬 CREATING NEW MOVIE");
-    console.log("========================================");
-    console.log("Body:", req.body);
-    console.log("Files:", req.files ? Object.keys(req.files) : "No files");
 
     // ── Parse crew & cast ──────────────────────────────────────────────────
     const crewData = {};
@@ -1255,6 +1250,8 @@ publishDate: new Date(),
       customVideoUrl:       req.body.customVideoUrl       || "",
       customTrailerUrl:     req.body.customTrailerUrl     || "",
     };
+
+
 
     if (req.body.publishDate) movieData.publishDate = new Date(req.body.publishDate);
     if (req.body.expiryDate)  movieData.expiryDate  = new Date(req.body.expiryDate);
@@ -1348,7 +1345,7 @@ res.status(201).json({
   },
 });
   } catch (error) {
-    console.error("\n❌ ERROR CREATING MOVIE:", error.message);
+    console.error(" ERROR CREATING MOVIE:", error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 };
