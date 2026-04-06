@@ -37,8 +37,11 @@ app.use("/api/subCategory", subCategoryRoutes);
 app.use("/api/public/banner", bannerPublicRoutes);
 app.use("/api/admin", homeSectionRoutes);
 app.use("/api/admin/section-items", sectionItemRoutes);
+app.use("/api", require("./routes/downloadRoutes"));
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
+const downloadRoutes = require("./routes/downloadRoutes");
 
+app.use("/api", downloadRoutes);
 app.use("/api/public", publicSectionRoutes);
 const publicCategoryRoutes = require("./routes/publicCategoryRoutes");
 

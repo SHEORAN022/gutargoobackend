@@ -39,7 +39,7 @@ exports.createSection = async (req, res) => {
 ============================================ */
 exports.getSections = async (req, res) => {
   try {
-    const sections = await HomeSection.find()
+    const sections = await HomeSection.find({})
       .sort({ displayOrder: 1 });
 
     res.json({

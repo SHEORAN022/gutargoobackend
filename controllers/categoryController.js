@@ -1,74 +1,159 @@
 const Category = require("../models/Category");
 
-// ✅ CREATE
+// ✅ CREATE CATEGORY
 exports.createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, categoryType } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ error: "Category name is required" });
+    if (!name || !categoryType) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and categoryType are required",
+      });
     }
 
-    const exist = await Category.findOne({ name });
-    if (exist) return res.status(400).json({ error: "Category already exists" });
+    // check duplicate
+    const existing = await Category.findOne({ name });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Category already exists",
+      });
+    }
 
-    const category = await Category.create({ name });
+    const category = await Category.create({
+      name,
+      categoryType,
+    });
 
-    res.status(201).json({ success: true, data: category });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: err.message });
+    console.log(category,req,'data ')
+
+    res.status(201).json({
+      success: true,
+      message: "Category created successfully",
+      data: category,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error creating category",
+      error: error.message,
+    });
   }
 };
 
-// ✅ GET ALL
+// ✅ GET ALL (OPTIONAL FILTER BY TYPE)
 exports.getCategories = async (req, res) => {
   try {
-    const data = await Category.find().sort({ createdAt: -1 });
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const { categoryType } = req.query;
+
+    let filter = {};
+    // if (categoryType) {
+    //   filter.categoryType = categoryType.toLowerCase();
+    // }
+
+    const categories = await Category.find({}).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: categories.length,
+      data: categories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching categories",
+      error: error.message,
+    });
   }
 };
 
-// ✅ DELETE
-exports.deleteCategory = async (req, res) => {
+// ✅ GET SINGLE CATEGORY
+exports.getCategoryById = async (req, res) => {
   try {
-    const deleted = await Category.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ error: "Category not found" });
+    const { id } = req.params;
+
+    const category = await Category.findById(id);
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
     }
-    res.json({ success: true, message: "Deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    res.status(200).json({
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching category",
+      error: error.message,
+    });
   }
 };
 
-// ✅ UPDATE
+// ✅ UPDATE CATEGORY
 exports.updateCategory = async (req, res) => {
   try {
-    const { name } = req.body;
-    
-    if (!name) {
-      return res.status(400).json({ error: "Category name is required" });
-    }
+    const { id } = req.params;
+    const { name, categoryType } = req.body;
 
-    // Check if category exists
-    const exist = await Category.findOne({ name, _id: { $ne: req.params.id } });
-    if (exist) return res.status(400).json({ error: "Category name already exists" });
-
-    const updated = await Category.findByIdAndUpdate(
-      req.params.id,
-      { name },
-      { new: true }
+    const category = await Category.findByIdAndUpdate(
+      id,
+      {
+        name,
+        categoryType,
+      },
+      { new: true, runValidators: true }
     );
 
-    if (!updated) {
-      return res.status(404).json({ error: "Category not found" });
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
     }
 
-    res.json({ success: true, data: updated });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(200).json({
+      success: true,
+      message: "Category updated successfully",
+      data: category,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating category",
+      error: error.message,
+    });
+  }
+};
+
+// ✅ DELETE CATEGORY
+exports.deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await Category.findByIdAndDelete(id);
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Category deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting category",
+      error: error.message,
+    });
   }
 };
