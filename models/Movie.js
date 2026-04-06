@@ -165,6 +165,7 @@ movieSchema.virtual("trailerStreamUrl").get(function () {
   return this.trailer?.status === 4
     ? this.trailer?.hlsUrl
     : this.customTrailerUrl || null;
+    
 });
 
 movieSchema.virtual("directPlay").get(function () {

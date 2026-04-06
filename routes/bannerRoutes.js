@@ -1,34 +1,4 @@
-// const express = require("express");
-// const router = express.Router();
 
-// const {
-//   createBanner,
-//   getBanners,
-//   getBannerById,
-//   updateBanner,
-//   deleteBanner,
-// } = require("../controllers/bannerController"); // 👈 PATH CHECK
-
-// const { auth } = require("../middleware/authMiddleware");
-// const multer = require("multer");
-
-// const storage = multer.memoryStorage();
-
-// const upload = multer({ storage }).fields([
-//   { name: "logoImage", maxCount: 1 },
-//   { name: "bannerImage", maxCount: 1 },
-// ]);
-
-// // ✅ ROUTES
-// router.post("/", auth, upload, createBanner);
-// router.get("/", getBanners);
-// router.get("/:id", getBannerById);
-// router.put("/:id", auth, upload, updateBanner);
-// router.delete("/:id", auth, deleteBanner);
-
-// module.exports = router;
-
-// routes/bannerRoutes.js
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");

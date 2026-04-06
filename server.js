@@ -83,6 +83,7 @@ const subCategoryRoutes = require("./routes/subCategoryRoutes");
 const bannerPublicRoutes = require("./routes/bannerPublicRoutes");
 const homeSectionRoutes = require("./routes/homeSectionRoutes");
 const sectionItemRoutes = require("./routes/sectionItemRoutes");
+const casetAndCrewRoutes = require("./routes/castAndCrew")
 
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
@@ -93,6 +94,7 @@ app.use("/api/subCategory", subCategoryRoutes);
 app.use("/api/public/banner", bannerPublicRoutes);
 app.use("/api/admin", homeSectionRoutes);
 app.use("/api/admin/section-items", sectionItemRoutes);
+app.use("/api/castAndCrew",casetAndCrewRoutes)
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 
 app.use("/api/public", publicSectionRoutes);
