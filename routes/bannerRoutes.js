@@ -21,14 +21,14 @@ const upload = multer({ storage }).fields([
 ]);
 
 // Movie dropdown endpoint
-router.get("/movies-dropdown", auth, getMoviesForDropdown);
+router.get("/movies-dropdown",  getMoviesForDropdown);
 
 // Banner CRUD routes
-router.post("/", auth, upload, createBanner);
-router.get("/", auth, getBanners);
-router.get("/:id", auth, getBannerById);
-router.put("/:id", auth, upload, updateBanner);
-router.delete("/:id", auth, deleteBanner);
-router.patch("/:id/toggle-publish", auth, togglePublish);
+router.post("/", upload, createBanner);
+router.get("/", getBanners);
+router.get("/:id",  getBannerById);
+router.put("/:id",  upload, updateBanner);
+router.delete("/:id",  deleteBanner);
+router.patch("/:id/toggle-publish",  togglePublish);
 
 module.exports = router;
