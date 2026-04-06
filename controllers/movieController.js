@@ -222,7 +222,8 @@ const createMovie = async (req, res) => {
 publishDate: new Date(),
       subscriptionRequired: req.body.subscriptionRequired === "true",
       enableAds:            req.body.enableAds            === "true",
-      allowDownloads:       req.body.allowDownloads       === "true",
+      // allowDownloads:       req.body.allowDownloads       === "true",
+      allowDownloads:       req.body.allowDownloads     ,
       featuredMovie:        req.body.featuredMovie        === "true",
       contentVendor:        req.body.contentVendor        || "Internal",
       vendorId:             req.body.vendorId             || "",
@@ -364,7 +365,8 @@ const updateMovie = async (req, res) => {
     ];
     boolFields.forEach((field) => {
       if (updateData[field] !== undefined)
-        updateData[field] = updateData[field] === "true";
+        // updateData[field] = updateData[field] === "true";
+        updateData[field] = updateData[field]
     });
 
     // File uploads
