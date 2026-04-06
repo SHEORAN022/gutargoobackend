@@ -1,4 +1,4 @@
-const express = require("express")
+const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const { auth } = require("../middleware/authMiddleware");
@@ -16,10 +16,10 @@ const upload = multer({ storage }).fields([
   { name: "profileImage", maxCount: 1 },
 ]);
 
-router.get("/", auth, getCastAndCrew);
-router.post("/", auth, upload, createCastAndCrew);
-router.get("/:id", auth, getCastCrewByID);
-router.put("/:id", auth, upload, updateCastAndCrew);
-router.delete("/:id", auth,   deleteCastAndCrew);
+router.get("/",  getCastAndCrew);
+router.post("/",  upload, createCastAndCrew);
+router.get("/:id",  getCastCrewByID);
+router.put("/:id",  upload, updateCastAndCrew);
+router.delete("/:id",  deleteCastAndCrew);
 
 module.exports = router;
