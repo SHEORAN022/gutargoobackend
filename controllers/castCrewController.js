@@ -70,7 +70,7 @@ exports.getCastAndCrew = async (req, res) => {
 };
 exports.getAllCasetAndCrew = async(req,res) =>{
   try{
-    const castAndCrewData = await CastAndCrew.find({})
+    const castAndCrewData = await CastAndCrew.find()
     res?.status(200).json({
       data:castAndCrewData,
       success:true,
@@ -78,6 +78,7 @@ exports.getAllCasetAndCrew = async(req,res) =>{
     })
   }
    catch(error){
+    console.log(error,'get all errors ')
     res.status(500).json({
       success:false,
       message:"Something Went wrong "

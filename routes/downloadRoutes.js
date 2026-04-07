@@ -14,6 +14,7 @@ const router = express.Router();
 const { streamVideo } = require("../controllers/downloadController");
 
 // 👉 अब clean route
-router.get("/:videoId", streamVideo);
+// router.get("/:videoId", streamVideo);
+router.get("/download/:videoId",  streamVideo);
 
 module.exports = router;

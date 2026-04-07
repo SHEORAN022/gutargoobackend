@@ -115,10 +115,10 @@ exports.getBanners = async (req, res) => {
       message: err.message,
     });
   }
-  if (urlFromBody && urlFromBody.startsWith("http")) {
-    return { url: urlFromBody, public_id: "" };
-  }
-  return { url: "", public_id: "" };
+  // if (urlFromBody && urlFromBody.startsWith("http")) {
+  //   return { url: urlFromBody, public_id: "" };
+  // }
+  // return { url: "", public_id: "" };
 };
 
 /* ============================================
@@ -223,7 +223,7 @@ exports.deleteBanner = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const banner = await Banner.findById(id);
+    const banner = await Banner.findByIdAndDelete(id);
     if (!banner) {
       return res.status(404).json({
         success: false,

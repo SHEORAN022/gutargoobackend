@@ -13,8 +13,7 @@
 // //         message: "Movie not found",
 // //       });
 // //     }
-
-// //     const videoUrl = movie?.movieFile?.mp4Url;
+// //     const videoUrl = movie?.movnodeieFile?.mp4Url;
 
 // //     if (!videoUrl) {
 // //       return res.status(400).json({
