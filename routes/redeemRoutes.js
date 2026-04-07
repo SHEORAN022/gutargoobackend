@@ -16,12 +16,13 @@ router.post("/redeem/admin/create", createRedeemCode);
 
 
 router.get("/redeem/admin/all", getAllCodes);
-
-router.delete("/redeem/admin/:id", deleteCode);
-
 router.get("/redeem/list", getAvailableCodes);
 
 router.post("/redeem",  redeemCode);
+
+router.delete("/redeem/admin/:id", deleteCode);
+
+
 
 
 module.exports = router;
