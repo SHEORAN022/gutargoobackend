@@ -176,7 +176,7 @@ exports.getUsersDataAll = async(req,res) =>{
   }
 }
 
-// ✅ VERIFY OTP + TOKEN
+
 // exports.verifyOtp = async (req, res) => {
 //   try {
 //     let { mobile, otp } = req.body;
@@ -189,33 +189,39 @@ exports.getUsersDataAll = async(req,res) =>{
 //     }
 
 //     if (!mobile.startsWith("91")) {
-//       mobile = "91" + mobile;
+//       mobile = mobile;
 //     }
 
 //     const record = await Otp.findOne({ mobile, otp });
 
 //     if (!record) {
-//       return res.json({
-//         success: false,
-//         message: "Invalid OTP",
-//       });
+//       return res.json({ success: false, message: "Invalid OTP" });
 //     }
 
 //     if (record.expiresAt < new Date()) {
-//       return res.json({
-//         success: false,
-//         message: "OTP Expired",
-//       });
+//       return res.json({ success: false, message: "Expired OTP" });
 //     }
 
-//     // 🗑️ delete OTP after verify
 //     await Otp.deleteMany({ mobile });
 
-//     // 🔐 JWT TOKEN
+//     // 🔥 CUSTOMER CREATE / UPDATE
+//     let customer = await Customer.findOne({ mobile });
+
+//     if (!customer) {
+//       customer = await Customer.create({
+//         mobile,
+//         lastLogin: new Date(),
+//       });
+//     } else {
+//       customer.lastLogin = new Date();
+//       await customer.save();
+//     }
+
+//     // 🔐 TOKEN
 //     const token = jwt.sign(
 //       {
-//         id: mobile,
-//         role: "user",
+//         id: customer._id,
+//         role: customer.role,
 //       },
 //       process.env.JWT_SECRET,
 //       { expiresIn: "7d" }
@@ -251,8 +257,9 @@ exports.verifyOtp = async (req, res) => {
       });
     }
 
+    // ✅ FIX HERE
     if (!mobile.startsWith("91")) {
-      mobile = mobile;
+      mobile = "91" + mobile;
     }
 
     const record = await Otp.findOne({ mobile, otp });
@@ -267,7 +274,6 @@ exports.verifyOtp = async (req, res) => {
 
     await Otp.deleteMany({ mobile });
 
-    // 🔥 CUSTOMER CREATE / UPDATE
     let customer = await Customer.findOne({ mobile });
 
     if (!customer) {
@@ -280,7 +286,6 @@ exports.verifyOtp = async (req, res) => {
       await customer.save();
     }
 
-    // 🔐 TOKEN
     const token = jwt.sign(
       {
         id: customer._id,
@@ -294,9 +299,7 @@ exports.verifyOtp = async (req, res) => {
       success: true,
       message: "OTP Verified",
       token,
-      user: {
-        mobile,
-      },
+      user: { mobile },
     });
 
   } catch (error) {
@@ -307,5 +310,3 @@ exports.verifyOtp = async (req, res) => {
     });
   }
 };
-
-
