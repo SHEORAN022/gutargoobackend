@@ -16,12 +16,11 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage }).fields([
   { name: "profileImage", maxCount: 1 },
 ]);
-
+router.get("/getAll",getAllCasetAndCrew)
 router.get("/",  getCastAndCrew);
 router.post("/",  upload, createCastAndCrew);
 router.get("/:id",  getCastCrewByID);
 router.put("/:id",  upload, updateCastAndCrew);
 router.delete("/:id",  deleteCastAndCrew);
-router.get("/getAll",getAllCasetAndCrew)
 
 module.exports = router;

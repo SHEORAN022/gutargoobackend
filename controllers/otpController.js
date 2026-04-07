@@ -151,6 +151,30 @@ exports.sendOtp = async (req, res) => {
     });
   }
 };
+exports.getUsersDataAll = async(req,res) =>{
+  try{
+    let {page=1,limit=50} = req.query
+    page= parseInt(page)
+    limit = parseInt(limit)
+    const totalRecords = await Otp.countDocuments()
+    const skip = (page-1)*limit
+    const data = await Otp.find().skip(skip).limit(limit).sort({createdAt:-1})
+
+    res.status(200).json({
+      data:data,
+      message:"User get Successfully",
+      page:page,
+      total:totalRecords
+    })
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).json({
+      success:false,
+      message:"Something went wrong "
+    })
+  }
+}
 
 // ✅ VERIFY OTP + TOKEN
 // exports.verifyOtp = async (req, res) => {
@@ -228,7 +252,7 @@ exports.verifyOtp = async (req, res) => {
     }
 
     if (!mobile.startsWith("91")) {
-      mobile = "91" + mobile;
+      mobile = mobile;
     }
 
     const record = await Otp.findOne({ mobile, otp });
@@ -283,3 +307,5 @@ exports.verifyOtp = async (req, res) => {
     });
   }
 };
+
+
