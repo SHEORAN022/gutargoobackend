@@ -68,9 +68,23 @@ app.use(express.urlencoded({ extended: true, limit: "5gb" }));
 app.use(cors({ origin: "*", credentials: true }));
 
 // MongoDB Connection
+// mongoose.connect(process.env.MONGO_URI)
+//   .then(() => console.log("✅ MongoDB Connected"))
+//   .catch(err => console.error("❌ MongoDB Error:", err));
+
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => console.error("❌ MongoDB Error:", err));
+  .then(() => {
+    console.log("✅ MongoDB Connected");
+
+    app.listen(PORT, () => {
+      console.log(`🔥 Server running on http://localhost:${PORT}`);
+      console.log(`📡 Public API: http://localhost:${PORT}/api/public/movies`);
+    });
+
+  })
+  .catch(err => {
+    console.error("❌ MongoDB Error:", err);
+  });
 
 // Routes
 const movieRoutes = require("./routes/movieRoutes");
