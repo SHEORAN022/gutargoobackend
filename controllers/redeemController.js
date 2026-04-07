@@ -91,10 +91,42 @@ exports.deleteCode = async (req, res) => {
 // ================= USER =================
 
 // GET AVAILABLE CODES
+// exports.getAvailableCodes = async (req, res) => {
+//   try {
+//     const userId = req.user._id;
+
+//     const codes = await RedeemCode.find({
+//       isActive: true,
+//       expiryDate: { $gt: new Date() },
+//     });
+
+//     const formatted = codes.map((code) => ({
+//       _id: code._id,
+//       code: code.code,
+//       type: code.type,
+//       value: code.value,
+//       expiryDate: code.expiryDate,
+//       maxUses: code.maxUses,
+//       usedCount: code.usedCount,
+//       alreadyUsed: code.usersUsed.includes(userId),
+//     }));
+
+//     res.json({
+//       success: true,
+//       data: formatted,
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
+
 exports.getAvailableCodes = async (req, res) => {
   try {
-    const userId = req.user._id;
-
     const codes = await RedeemCode.find({
       isActive: true,
       expiryDate: { $gt: new Date() },
@@ -108,7 +140,6 @@ exports.getAvailableCodes = async (req, res) => {
       expiryDate: code.expiryDate,
       maxUses: code.maxUses,
       usedCount: code.usedCount,
-      alreadyUsed: code.usersUsed.includes(userId),
     }));
 
     res.json({
@@ -123,7 +154,6 @@ exports.getAvailableCodes = async (req, res) => {
     });
   }
 };
-
 
 // APPLY CODE
 exports.redeemCode = async (req, res) => {

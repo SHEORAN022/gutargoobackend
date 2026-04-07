@@ -204,7 +204,7 @@ exports.updateBanner = async (req, res) => {
     res.json({
       success: true,
       message: "Banner updated successfully",
-      data: updated,
+      data: banner,
     });
 
   } catch (err) {
@@ -275,7 +275,8 @@ exports.togglePublish = async (req, res) => {
       message: err.message,
     });
   }
-};exports.getMoviesForDropdown = async (req, res) => {
+};
+exports.getMoviesForDropdown = async (req, res) => {
   try {
     const movies = await require("../models/Movie")
       .find()
