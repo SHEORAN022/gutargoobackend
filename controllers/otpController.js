@@ -113,9 +113,19 @@ exports.sendOtp = async (req, res) => {
     }
 
     // 🇮🇳 add country code
-    if (!mobile.startsWith("91")) {
+    // if (!mobile.startsWith("+91")) {
+    //   mobile = "+91" + mobile;
+    // }
+
+// mobile = mobile.replace(/\D/g, ""); // remove +, spaces, etc.
+
+// if (mobile.length === 10) {
+//   mobile = "91" + mobile;
+// }
+ if (!mobile.startsWith("91")) {
       mobile = "91" + mobile;
     }
+
 
     const otp = generateOtp();
 
@@ -132,11 +142,12 @@ exports.sendOtp = async (req, res) => {
     // 📨 DLT message (EXACT MATCH REQUIRED)
     const message = `Your One Time Password (OTP) is ${otp} for Gutargoo+ app login. Do not share it with anyone. Valid till 5 minutes.www.gutargooplus.com`;
 
-    const url = `${process.env.SMS_BASE_URL}?user=${process.env.SMS_USER}&authkey=${process.env.SMS_AUTH_KEY}&type=1&sender=${process.env.SMS_SENDER}&mobile=${mobile}&text=${encodeURIComponent(message)}&templateid=${process.env.SMS_TEMPLATE_ID}`;
+    // const url = `${process.env.SMS_BASE_URL}?user=${process.env.SMS_USER}&authkey=${process.env.SMS_AUTH_KEY}&type=1&sender=${process.env.SMS_SENDER}&mobile=${mobile}&text=${encodeURIComponent(message)}&templateid=${process.env.SMS_TEMPLATE_ID}`;
+        const url = `${process.env.SMS_BASE_URL}?user=${process.env.SMS_USER}&authkey=${process.env.SMS_AUTH_KEY}&type=1&sender=${process.env.SMS_SENDER}&mobile=${mobile}&text=${encodeURIComponent(message)}&templateid=${process.env.SMS_TEMPLATE_ID}`;
 
     // 📡 Send SMS
     const response = await axios.get(url);
-    console.log("📩 SMS RESPONSE:", response.data);
+    console.log("📩 SMS RESPONSE:", response.data,mobile,otp);
 
     return res.json({
       success: true,

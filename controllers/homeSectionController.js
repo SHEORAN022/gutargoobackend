@@ -37,10 +37,44 @@ exports.createSection = async (req, res) => {
 /* ============================================
    🔥 GET ALL SECTIONS (ADMIN)
 ============================================ */
+// exports.getSections = async (req, res) => {
+//   try {
+//     const sections = await HomeSection.find({})
+//       .sort({ displayOrder: 1 });
+//     console.log(sections,'get all secon')
+//     res.json({
+//       success: true,
+//       data: sections,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+
 exports.getSections = async (req, res) => {
   try {
     const sections = await HomeSection.find({})
-      .sort({ displayOrder: 1 });
+      .sort({ displayOrder: 1 })
+    res.json({
+      success: true,
+      data: sections,
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getSectionsMobile = async (req, res) => {
+  try {
+    const sections = await HomeSection.find({})
+      .sort({ displayOrder: 1 })
+      .populate({
+        path: "sectionData.movies",
+        select: "_id horizontalBanner verticalPoster",
+      });
+    console.log(sections,'get sections here ')
 
     res.json({
       success: true,
@@ -50,7 +84,6 @@ exports.getSections = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 /* ============================================
    🔥 GET SINGLE
 ============================================ */

@@ -500,13 +500,13 @@ const updateMovie = async (req, res) => {
 const getMovies = async (req, res) => {
   try {
     const { type } = req.query;
-
+    
     //select
     const movies = await Movie.find().sort({ createdAt: -1 });
+    console.log(movies,'all movies ')
     const moviesWithUrls = movies.map((movie) => {
       const movieObj = movie.toObject();
-
-      // ❗ PEHLE crew bana
+      //PE  HLE crew bana
       // const crew = formatCrew(movieObj);
       const crew = formatCrew(movie);
       // const cast = movieObj.castMembers;
