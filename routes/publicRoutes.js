@@ -715,7 +715,6 @@ router.get("/movies/:id", async (req, res) => {
       publishStatus: true,
       publishDate: { $lte: new Date() }
     });
-    
     if (!movie) {
       return res.status(404).json({ success: false, message: "Movie not found" });
     }

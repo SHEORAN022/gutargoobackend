@@ -35,7 +35,7 @@ exports.createRedeemCode = async (req, res) => {
       maxUses,
     });
 
-    res.json({
+    res.status(201).json({
       success: true,
       message: "Redeem code created",
       data: newCode,
@@ -204,9 +204,9 @@ exports.redeemCode = async (req, res) => {
     // const user = await User.findById(userId);
 
     // // 🎁 APPLY BENEFIT
-    if (redeem.type === "coins") {
-      user.coins = (user.coins || 0) + redeem.value;
-    }
+    // if (redeem.type === "coins") {
+    //   user.coins = (user.coins || 0) + redeem.value;
+    // }
 
     if (redeem.type === "subscription") {
       const days = redeem.value;

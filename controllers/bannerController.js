@@ -103,6 +103,7 @@ exports.getBanners = async (req, res) => {
       .populate("movieId", "movieTitle posterImage verticalPoster releaseYear")
       .sort({ displayOrder: 1, createdAt: -1 });
 
+
     res.json({
       success: true,
       data: banners,

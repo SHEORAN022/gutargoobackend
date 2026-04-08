@@ -8,6 +8,7 @@ const { auth,  } = require("../middleware/authMiddleware");
 router.post("/sections",   controller.createSection);
 
 router.get("/sections",   controller.getSections);
+router.get("/sections/allList",   controller.getSectionsMobile);
 router.put("/sections/reorder",   controller.reorderSections);
 router.get("/sections/:id",  controller.getSectionById);
 

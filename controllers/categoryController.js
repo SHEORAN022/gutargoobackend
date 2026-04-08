@@ -54,6 +54,7 @@ exports.getCategories = async (req, res) => {
 
     const categories = await Category.find({}).sort({ createdAt: -1 });
 
+
     res.status(200).json({
       success: true,
       count: categories.length,
