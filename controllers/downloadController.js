@@ -176,11 +176,11 @@ const streamVideo = async (req, res) => {
     // });
 
   } catch (error) {
-    console.log("❌ FULL ERROR:", error);
+    console.log("❌ STREAM ERROR:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Server error dddd",
     });
   }
 };

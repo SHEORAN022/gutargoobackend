@@ -187,8 +187,9 @@ exports.verifyOtp = async (req, res) => {
       });
     }
 
+    // ✅ FIX HERE
     if (!mobile.startsWith("91")) {
-      mobile = mobile;
+      mobile = "91" + mobile;
     }
 
     const record = await Otp.findOne({ mobile, otp });
@@ -203,7 +204,6 @@ exports.verifyOtp = async (req, res) => {
 
     await Otp.deleteMany({ mobile });
 
-    // 🔥 CUSTOMER CREATE / UPDATE
     let customer = await Customer.findOne({ mobile });
 
     if (!customer) {
@@ -217,7 +217,6 @@ exports.verifyOtp = async (req, res) => {
       await customer.save();
     }
 
-    // 🔐 TOKEN
     const token = jwt.sign(
       {
         id: customer._id,
@@ -231,9 +230,7 @@ exports.verifyOtp = async (req, res) => {
       success: true,
       message: "OTP Verified",
       token,
-      user: {
-        mobile,
-      },
+      user: { mobile },
     });
 
   } catch (error) {
@@ -244,5 +241,3 @@ exports.verifyOtp = async (req, res) => {
     });
   }
 };
-
-
