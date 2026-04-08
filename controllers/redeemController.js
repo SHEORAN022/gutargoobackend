@@ -159,7 +159,7 @@ exports.getAvailableCodes = async (req, res) => {
 // APPLY CODE
 exports.redeemCode = async (req, res) => {
   try {
-    const userId = req.user._id;
+    // const userId = req.user._id;
     let { code } = req.body;
 
     if (!code) {
@@ -194,16 +194,16 @@ exports.redeemCode = async (req, res) => {
       });
     }
 
-    if (redeem.usersUsed.includes(userId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Already used",
-      });
-    }
+    // if (redeem.usersUsed.includes(userId)) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Already used",
+    //   });
+    // }
 
-    const user = await User.findById(userId);
+    // const user = await User.findById(userId);
 
-    // 🎁 APPLY BENEFIT
+    // // 🎁 APPLY BENEFIT
     if (redeem.type === "coins") {
       user.coins = (user.coins || 0) + redeem.value;
     }
@@ -211,19 +211,19 @@ exports.redeemCode = async (req, res) => {
     if (redeem.type === "subscription") {
       const days = redeem.value;
       const current = user.subscriptionExpiry || new Date();
-      user.subscriptionExpiry = new Date(
-        current.getTime() + days * 86400000
-      );
+      // user.subscriptionExpiry = new Date(
+      //   current.getTime() + days * 86400000
+      // );
     }
 
-    if (redeem.type === "premium") {
-      user.isPremium = true;
-    }
+    // if (redeem.type === "premium") {
+    //   user.isPremium = true;
+    // }
 
-    await user.save();
+    // await user.save();
 
     redeem.usedCount += 1;
-    redeem.usersUsed.push(userId);
+    // redeem.usersUsed.push(userId);
     await redeem.save();
 
     res.json({
@@ -234,6 +234,7 @@ exports.redeemCode = async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: error.message,
