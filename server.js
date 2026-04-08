@@ -54,7 +54,6 @@
 
 
 
-
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -84,7 +83,8 @@ const bannerPublicRoutes = require("./routes/bannerPublicRoutes");
 const homeSectionRoutes = require("./routes/homeSectionRoutes");
 const sectionItemRoutes = require("./routes/sectionItemRoutes");
 const casetAndCrewRoutes = require("./routes/castAndCrew")
-
+const movieLikeRoutes = require("./routes/movieLikeRoutes");
+const redeemRoutes = require("./routes/redeemRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/public", publicRoutes);
@@ -94,17 +94,18 @@ app.use("/api/subCategory", subCategoryRoutes);
 app.use("/api/public/banner", bannerPublicRoutes);
 app.use("/api/admin", homeSectionRoutes);
 app.use("/api/admin/section-items", sectionItemRoutes);
-app.use("/api", require("./routes/downloadRoutes"));
+
 app.use("/api", require("./routes/searchRoutes"));
 app.use("/api/otp", require("./routes/otpRoutes"));
-
+app.use("/api/movie-likes", movieLikeRoutes);
+app.use("/api", redeemRoutes);
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 const downloadRoutes = require("./routes/downloadRoutes");
 
-app.use("/api", downloadRoutes);
+app.use("/api", downloadRoutes); 
 app.use("/api/castAndCrew",casetAndCrewRoutes)
-app.use("/api", require("./routes/searchRoutes"));
-app.use("/api/otp", require("./routes/otpRoutes"));
+
+
 app.use("/api/customer", require("./routes/CustomerRoutes"));
 // const publicSectionRoutes = require("./routes/publicSectionRoutes");
 

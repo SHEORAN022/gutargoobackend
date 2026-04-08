@@ -397,8 +397,8 @@ const updateMovie = async (req, res) => {
     ];
     boolFields.forEach((field) => {
       if (updateData[field] !== undefined)
-        // updateData[field] = updateData[field] === "true";
-        updateData[field] = updateData[field];
+        updateData[field] = updateData[field] === "true";
+        // updateData[field] = updateData[field];
     });
 
     // File uploads
@@ -503,13 +503,6 @@ const getMovies = async (req, res) => {
 
     //select
     const movies = await Movie.find().sort({ createdAt: -1 });
-
-    console.log(movies, "moveeee");
-    // const moviesWithUrls = movies.map((movie) => ({
-    //   ...movie.toObject(),
-    //   ...buildResponseExtras(movie),
-    // }));
-
     const moviesWithUrls = movies.map((movie) => {
       const movieObj = movie.toObject();
 

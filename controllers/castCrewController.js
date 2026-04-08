@@ -51,23 +51,40 @@ exports.getCastAndCrew = async (req, res) => {
     limit = parseInt(limit);
     const skip = (page - 1) * limit;
     const data = await CastAndCrew.find()
-      // .skip(skip)
-      // .limit(limit)
-      // .sort({ createdAt: -1 });
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
     const countDocuments = await CastAndCrew.countDocuments();
     res.status(201).json({
       success: true,
       data,
       message: "",
-      // page,
-      // limit,
-      // total: countDocuments,
-      // totalRecords: Math.ceil(countDocuments / limit),
+      page,
+      limit,
+      total: countDocuments,
+      totalRecords: Math.ceil(countDocuments / limit),
     });
   } catch (error) {
     console.log(error);
   }
 };
+exports.getAllCasetAndCrew = async(req,res) =>{
+  try{
+    const castAndCrewData = await CastAndCrew.find()
+    res?.status(200).json({
+      data:castAndCrewData,
+      success:true,
+      message:"Data get successfully"
+    })
+  }
+   catch(error){
+    console.log(error,'get all errors ')
+    res.status(500).json({
+      success:false,
+      message:"Something Went wrong "
+    })
+   }
+}
 
 exports.updateCastAndCrew = async (req, res) => {
   try {

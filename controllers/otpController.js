@@ -151,8 +151,32 @@ exports.sendOtp = async (req, res) => {
     });
   }
 };
+exports.getUsersDataAll = async(req,res) =>{
+  try{
+    let {page=1,limit=50} = req.query
+    page= parseInt(page)
+    limit = parseInt(limit)
+    const totalRecords = await Otp.countDocuments()
+    const skip = (page-1)*limit
+    const data = await Otp.find().skip(skip).limit(limit).sort({createdAt:-1})
 
-// ✅ VERIFY OTP + TOKEN
+    res.status(200).json({
+      data:data,
+      message:"User get Successfully",
+      page:page,
+      total:totalRecords
+    })
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).json({
+      success:false,
+      message:"Something went wrong "
+    })
+  }
+}
+
+
 // exports.verifyOtp = async (req, res) => {
 //   try {
 //     let { mobile, otp } = req.body;
@@ -165,33 +189,39 @@ exports.sendOtp = async (req, res) => {
 //     }
 
 //     if (!mobile.startsWith("91")) {
-//       mobile = "91" + mobile;
+//       mobile = mobile;
 //     }
 
 //     const record = await Otp.findOne({ mobile, otp });
 
 //     if (!record) {
-//       return res.json({
-//         success: false,
-//         message: "Invalid OTP",
-//       });
+//       return res.json({ success: false, message: "Invalid OTP" });
 //     }
 
 //     if (record.expiresAt < new Date()) {
-//       return res.json({
-//         success: false,
-//         message: "OTP Expired",
-//       });
+//       return res.json({ success: false, message: "Expired OTP" });
 //     }
 
-//     // 🗑️ delete OTP after verify
 //     await Otp.deleteMany({ mobile });
 
-//     // 🔐 JWT TOKEN
+//     // 🔥 CUSTOMER CREATE / UPDATE
+//     let customer = await Customer.findOne({ mobile });
+
+//     if (!customer) {
+//       customer = await Customer.create({
+//         mobile,
+//         lastLogin: new Date(),
+//       });
+//     } else {
+//       customer.lastLogin = new Date();
+//       await customer.save();
+//     }
+
+//     // 🔐 TOKEN
 //     const token = jwt.sign(
 //       {
-//         id: mobile,
-//         role: "user",
+//         id: customer._id,
+//         role: customer.role,
 //       },
 //       process.env.JWT_SECRET,
 //       { expiresIn: "7d" }
@@ -227,6 +257,7 @@ exports.verifyOtp = async (req, res) => {
       });
     }
 
+    // ✅ FIX HERE
     if (!mobile.startsWith("91")) {
       mobile = "91" + mobile;
     }
@@ -243,7 +274,6 @@ exports.verifyOtp = async (req, res) => {
 
     await Otp.deleteMany({ mobile });
 
-    // 🔥 CUSTOMER CREATE / UPDATE
     let customer = await Customer.findOne({ mobile });
 
     if (!customer) {
@@ -256,7 +286,6 @@ exports.verifyOtp = async (req, res) => {
       await customer.save();
     }
 
-    // 🔐 TOKEN
     const token = jwt.sign(
       {
         id: customer._id,
@@ -270,9 +299,7 @@ exports.verifyOtp = async (req, res) => {
       success: true,
       message: "OTP Verified",
       token,
-      user: {
-        mobile,
-      },
+      user: { mobile },
     });
 
   } catch (error) {

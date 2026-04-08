@@ -8,6 +8,7 @@ const {
   updateCastAndCrew,
   deleteCastAndCrew,
   getCastCrewByID,
+  getAllCasetAndCrew
 } = require("../controllers/castCrewController");
 
 const storage = multer.memoryStorage();
@@ -15,7 +16,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage }).fields([
   { name: "profileImage", maxCount: 1 },
 ]);
-
+router.get("/getAll",getAllCasetAndCrew)
 router.get("/",  getCastAndCrew);
 router.post("/",  upload, createCastAndCrew);
 router.get("/:id",  getCastCrewByID);
