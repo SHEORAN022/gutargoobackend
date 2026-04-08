@@ -1,94 +1,168 @@
- 
+
+
 const mongoose = require("mongoose");
 
- const episodeSchema = new mongoose.Schema({
-    title:{
-        type: String,
-        required: true,
+// 🎬 Episode Schema
+const episodeSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+
+  description: String,
+
+  videoFile: {
+    url: String,
+    videoId: String,
+    hlsUrl: String,
+    mp4Url: String,
+    directPlayUrl: String,
+    thumbnailUrl: String,
+    duration: Number,
+    size: Number,
+    status: {
+      type: Number,
+      default: 2, // 2 = processing, 4 = ready
     },
-    description: String,
-    videoUrl:{
-        type: String,
-        required: true,
+  },
+
+  trailer: {
+    url: String,
+    videoId: String,
+    hlsUrl: String,
+    mp4Url: String,
+    directPlayUrl: String,
+    thumbnailUrl: String,
+    duration: Number,
+    size: Number,
+    status: {
+      type: Number,
+      default: 2,
     },
-    trailerUrl:{
-        type: String,
-    },
-    thumbnail: true,
-    episodeNumber: {
-        type: Number,
-        required: true,
-    },
-    releaseDate:{
-        type: Date,
-        required: true,
-    },
-    isPublished:{
-        type: Boolean,
-        default: true,
+  },
+
+  thumbnail: {
+    url: String,
+    publicId: String,
+  },
+
+  episodeNumber: {
+    type: Number,
+    required: true,
+  },
+
+  releaseDate: {
+    type: Date,
+    required: true,
+  },
+
+  isPublished: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+// 📺 Season Schema
+const seasonSchema = new mongoose.Schema({
+  seasonNumber: {
+    type: Number,
+    required: true,
+  },
+
+  title: String,
+
+  releaseDate: Date,
+
+  episodes: [episodeSchema],
+});
+
+// 🎥 WebSeries Schema
+const webseriesSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
     },
 
- });
- const seasonSchema = new mongoose.schema({
-    seasonNumber:{
-        type: Number,
-        required: true,
-    },
-    title: string,
-    releaseDate:{
-        type: Date,
-    
-    },
-    episodes:[episodeSchema],
- });
- const webseriesSchema = new mongoose.schema({
-    title:{
-        type: string,
-        required: true,
-    },
     description: String,
-     genre:[String],
-     trailerUrl:{
-        type: String,
-     },
-     thumbnail: String,
-    banner: String,
-    Lang: String,
-    releaseDate: {
-        type: date,
+
+    genre: [String],
+
+    // 🎬 Trailer (WebSeries level)
+    trailer: {
+      url: String,
+      videoId: String,
+      hlsUrl: String,
+      mp4Url: String,
+      directPlayUrl: String,
+      thumbnailUrl: String,
+      duration: Number,
+      size: Number,
+      status: {
+        type: Number,
+        default: 2,
+      },
     },
-    castAndCrew:[
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "CastAndCrew",
-        },
+
+    // 🖼️ Images
+    thumbnail: {
+      url: String,
+      publicId: String,
+    },
+
+    banner: {
+      url: String,
+      publicId: String,
+    },
+
+    lang: {
+      type: String,
+      default: "Hindi",
+    },
+
+    releaseDate: Date,
+
+    // 🎭 Cast & Crew
+    castAndCrew: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CastAndCrew",
+      },
     ],
-    seasons:[seasonSchema],
 
-    Category:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
-        required: true,
-    },
-
-    totalSeasons:{
-        type: Number,
-        default:0,
-    },
-    totalEpisodes:{
-        type: Number,
-        default:0,
-
-    },
-    isPublished:{
-        type: Boolean,
-        default: true,
-    },
-    createdBy:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+    // 📂 Category
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
 
-     
- },{timestamps: true}
+    // 📺 Seasons
+    seasons: [seasonSchema],
+
+    // 📊 Stats
+    totalSeasons: {
+      type: Number,
+      default: 0,
+    },
+
+    totalEpisodes: {
+      type: Number,
+      default: 0,
+    },
+
+    // ⚙️ Settings
+    isPublished: {
+      type: Boolean,
+      default: true,
+    },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
 );
+
+module.exports = mongoose.model("WebSeries", webseriesSchema);

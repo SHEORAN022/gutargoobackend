@@ -136,7 +136,7 @@ exports.sendOtp = async (req, res) => {
 
     // 📡 Send SMS
     const response = await axios.get(url);
-    console.log("📩 SMS RESPONSE:", response.data);
+    console.log("📩 SMS RESPONSE:", response.data,message);
 
     return res.json({
       success: true,
@@ -156,9 +156,9 @@ exports.getUsersDataAll = async(req,res) =>{
     let {page=1,limit=50} = req.query
     page= parseInt(page)
     limit = parseInt(limit)
-    const totalRecords = await Otp.countDocuments()
+    const totalRecords = await Customer.countDocuments()
     const skip = (page-1)*limit
-    const data = await Otp.find().skip(skip).limit(limit).sort({createdAt:-1})
+    const data = await Customer.find().skip(skip).limit(limit).sort({createdAt:-1})
 
     res.status(200).json({
       data:data,
@@ -175,76 +175,6 @@ exports.getUsersDataAll = async(req,res) =>{
     })
   }
 }
-
-
-// exports.verifyOtp = async (req, res) => {
-//   try {
-//     let { mobile, otp } = req.body;
-
-//     if (!mobile || !otp) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Mobile and OTP required",
-//       });
-//     }
-
-//     if (!mobile.startsWith("91")) {
-//       mobile = mobile;
-//     }
-
-//     const record = await Otp.findOne({ mobile, otp });
-
-//     if (!record) {
-//       return res.json({ success: false, message: "Invalid OTP" });
-//     }
-
-//     if (record.expiresAt < new Date()) {
-//       return res.json({ success: false, message: "Expired OTP" });
-//     }
-
-//     await Otp.deleteMany({ mobile });
-
-//     // 🔥 CUSTOMER CREATE / UPDATE
-//     let customer = await Customer.findOne({ mobile });
-
-//     if (!customer) {
-//       customer = await Customer.create({
-//         mobile,
-//         lastLogin: new Date(),
-//       });
-//     } else {
-//       customer.lastLogin = new Date();
-//       await customer.save();
-//     }
-
-//     // 🔐 TOKEN
-//     const token = jwt.sign(
-//       {
-//         id: customer._id,
-//         role: customer.role,
-//       },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "7d" }
-//     );
-
-//     return res.json({
-//       success: true,
-//       message: "OTP Verified",
-//       token,
-//       user: {
-//         mobile,
-//       },
-//     });
-
-//   } catch (error) {
-//     console.log("❌ VERIFY OTP ERROR:", error.message);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Verification failed",
-//     });
-//   }
-// };
-
 
 exports.verifyOtp = async (req, res) => {
   try {
@@ -279,6 +209,7 @@ exports.verifyOtp = async (req, res) => {
     if (!customer) {
       customer = await Customer.create({
         mobile,
+        role:"customer",
         lastLogin: new Date(),
       });
     } else {
@@ -289,7 +220,7 @@ exports.verifyOtp = async (req, res) => {
     const token = jwt.sign(
       {
         id: customer._id,
-        role: customer.role,
+        role: "customer",
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }

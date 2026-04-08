@@ -1,5 +1,7 @@
 const HomeSection = require("../models/HomeSection");
 const SectionItem = require("../models/SectionItem");
+const WebSeries = require("../models/webseries");
+
 
 
 
@@ -11,7 +13,8 @@ const getModel = (type) => {
     case "movies":
       return Movies;
   
-   
+    case "webseries":
+      return WebSeries;
     default:
       return Movies;
   }
@@ -182,6 +185,15 @@ exports.getHomeSections = async (req, res) => {
          🔥 ADMIN SELECTED
       =============================== */
       if (section.contentSource === "admin_selected") {
+          movies = await Movie.find(query)
+    .sort(sort)
+    .limit(limit)
+    .lean();
+
+  webseries = await WebSeries.find(query)
+    .sort(sort)
+    .limit(limit)
+    .lean();
         const manualItems = await SectionItem.find({
           sectionId: section._id,
         }).sort({ displayOrder: 1 });
@@ -254,6 +266,7 @@ exports.getHomeSections = async (req, res) => {
         title: section.title,
         type: section.sectionType,
         movies: items,
+         webseries: webseries,
       });
     }
 

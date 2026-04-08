@@ -14,12 +14,12 @@ sectionData: {
         ref: "Movie",
       },
     ],
-    // webseries: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "WebSeries",
-    //   },
-    // ],
+    webseries: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "WebSeries",
+      },
+    ],
     // tvshows: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,

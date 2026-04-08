@@ -16,6 +16,19 @@ const customerSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
     },
+    isPremiusm:{
+      type:Boolean,
+      default:false
+    },
+    coins:{
+      type:Number,
+      default:0
+    },
+    subscriptionDays:{
+      type:Number,
+      default:0
+    }
+
   },
   {
     timestamps: true,

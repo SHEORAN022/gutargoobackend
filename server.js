@@ -101,6 +101,9 @@ app.use("/api/movie-likes", movieLikeRoutes);
 app.use("/api", redeemRoutes);
 const publicSectionRoutes = require("./routes/publicSectionRoutes");
 const downloadRoutes = require("./routes/downloadRoutes");
+const webSeriesRoutes = require("./routes/webseriesRoutes");
+
+app.use("/api/webseries", webSeriesRoutes);
 
 app.use("/api", downloadRoutes); 
 app.use("/api/castAndCrew",casetAndCrewRoutes)

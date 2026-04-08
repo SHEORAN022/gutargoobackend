@@ -37,11 +37,10 @@ const redeemCodeSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
-
     usersUsed: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // ✅ FIXED
+        ref: "Otp", // ✅ FIXED
       },
     ],
 
