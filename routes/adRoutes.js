@@ -8,11 +8,11 @@ const { auth, requireAdmin } = require("../middleware/authMiddleware");
 router.get("/player", adController.getAdsForPlayer);
 
 // 🔐 ADMIN
-router.post("/create", auth, requireAdmin, adController.createAd);
-router.get("/all", auth, requireAdmin, adController.getAllAds);
-router.get("/:id", auth, requireAdmin, adController.getAdById);
-router.put("/update/:id", auth, requireAdmin, adController.updateAd);
-router.delete("/delete/:id", auth, requireAdmin, adController.deleteAd);
-router.put("/toggle/:id", auth, requireAdmin, adController.toggleAdStatus);
+router.post("/create",  adController.createAd);
+router.get("/all",  adController.getAllAds);
+router.get("/:id",  adController.getAdById);
+router.put("/update/:id",  adController.updateAd);
+router.delete("/delete/:id",  adController.deleteAd);
+router.put("/toggle/:id",  adController.toggleAdStatus);
 
 module.exports = router;
