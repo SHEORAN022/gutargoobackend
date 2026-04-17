@@ -1,24 +1,9 @@
+
+
 const HomeSection = require("../models/HomeSection");
 const SectionItem = require("../models/SectionItem");
+const Movie = require("../models/Movie"); // ensure correct path
 const WebSeries = require("../models/webseries");
-
-
-
-
-
-
-/* 🔥 MODEL PICKER */
-const getModel = (type) => {
-  switch (type) {
-    case "movies":
-      return Movies;
-  
-    case "webseries":
-      return WebSeries;
-    default:
-      return Movies;
-  }
-};
 
 /* ============================================
    🔥 CREATE SECTION
@@ -40,25 +25,11 @@ exports.createSection = async (req, res) => {
 /* ============================================
    🔥 GET ALL SECTIONS (ADMIN)
 ============================================ */
-// exports.getSections = async (req, res) => {
-//   try {
-//     const sections = await HomeSection.find({})
-//       .sort({ displayOrder: 1 });
-//     console.log(sections,'get all secon')
-//     res.json({
-//       success: true,
-//       data: sections,
-//     });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-
 exports.getSections = async (req, res) => {
   try {
     const sections = await HomeSection.find({})
-      .sort({ displayOrder: 1 })
+      .sort({ displayOrder: 1 });
+
     res.json({
       success: true,
       data: sections,
@@ -69,26 +40,101 @@ exports.getSections = async (req, res) => {
   }
 };
 
+/* ============================================
+   🔥 GET SECTIONS (MOBILE - MIXED DATA)
+============================================ */
+// exports.getSectionsMobile = async (req, res) => {
+//   try {
+//     const sections = await HomeSection.find({})
+//       .sort({ displayOrder: 1 })
+//       .populate({
+//         path: "sectionData.movies",
+//         select: "_id horizontalBanner verticalPoster",
+//       })
+//       .populate({
+//         path: "sectionData.webseries",
+//         select: "_id horizontalBanner verticalPoster",
+//       });
+
+//     const finalData = sections.map(section => {
+
+//       const movies = (section.sectionData.movies || []).map(item => ({
+//         _id: item._id,
+//         type: "movie",
+//         horizontalBanner: item.horizontalBanner || {},
+//         verticalPoster: item.verticalPoster || {}
+//       }));
+
+//       const webseries = (section.sectionData.webseries || []).map(item => ({
+//         _id: item._id,
+//         type: "webseries",
+//         horizontalBanner: item.horizontalBanner || {},
+//         verticalPoster: item.verticalPoster || {}
+//       }));
+
+//       const sectionData = [...movies, ...webseries];
+
+//       return {
+//         _id: section._id,
+//         title: section.title,
+//         displayStyle: section.displayStyle,
+//         sectionData
+//       };
+//     });
+
+//     res.json({
+//       success: true,
+//       data: finalData,
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 exports.getSectionsMobile = async (req, res) => {
   try {
     const sections = await HomeSection.find({})
       .sort({ displayOrder: 1 })
-      .populate({
-        path: "sectionData.movies",
-        select: "_id horizontalBanner verticalPoster",
-      });
-    console.log(sections,'get sections here ')
+      .populate("sectionData.movies", "_id")
+      .populate("sectionData.webseries", "_id");
+
+    const finalData = sections.map(section => {
+
+      // 🎬 Movies
+      const movies = (section.sectionData.movies || []).map(item => ({
+        _id: item._id,
+        type: "movie"
+      }));
+
+      // 📺 WebSeries
+      const webseries = (section.sectionData.webseries || []).map(item => ({
+        _id: item._id,
+        type: "webseries"
+      }));
+
+      // 🔥 COMBINE
+      const sectionData = [...movies, ...webseries];
+
+      return {
+        _id: section._id,
+        title: section.title,
+        displayStyle: section.displayStyle,
+        sectionData
+      };
+    });
 
     res.json({
       success: true,
-      data: sections,
+      data: finalData,
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 /* ============================================
-   🔥 GET SINGLE
+   🔥 GET SINGLE SECTION
 ============================================ */
 exports.getSectionById = async (req, res) => {
   try {
@@ -102,13 +148,14 @@ exports.getSectionById = async (req, res) => {
       success: true,
       data: section,
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
 /* ============================================
-   🔥 UPDATE
+   🔥 UPDATE SECTION
 ============================================ */
 exports.updateSection = async (req, res) => {
   try {
@@ -127,13 +174,14 @@ exports.updateSection = async (req, res) => {
       message: "Section updated",
       data: section,
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
 /* ============================================
-   🔥 DELETE
+   🔥 DELETE SECTION
 ============================================ */
 exports.deleteSection = async (req, res) => {
   try {
@@ -149,6 +197,7 @@ exports.deleteSection = async (req, res) => {
       success: true,
       message: "Section deleted",
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -173,13 +222,14 @@ exports.toggleSection = async (req, res) => {
       message: "Status updated",
       data: section,
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
 /* ============================================
-   🔥 REORDER (DRAG DROP)
+   🔥 REORDER SECTIONS
 ============================================ */
 exports.reorderSections = async (req, res) => {
   try {
@@ -195,113 +245,42 @@ exports.reorderSections = async (req, res) => {
       success: true,
       message: "Reordered successfully",
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
 /* ============================================
-   🔥 MAIN HOME API (USER SIDE)
+   🔥 HOME API (USER SIDE - FINAL CLEAN)
 ============================================ */
 exports.getHomeSections = async (req, res) => {
   try {
     const sections = await HomeSection.find({ isActive: true })
       .sort({ displayOrder: 1 })
-      .lean();
+      .populate("sectionData.movies")
+      .populate("sectionData.webseries");
 
-    const finalData = [];
+    const finalData = sections.map(section => {
 
-    for (let section of sections) {
-      let items = [];
+      const movies = (section.sectionData.movies || []).map(item => ({
+        ...item.toObject(),
+        type: "movie"
+      }));
 
-      /* ===============================
-         🔥 ADMIN SELECTED
-      =============================== */
-      if (section.contentSource === "admin_selected") {
-          movies = await Movie.find(query)
-    .sort(sort)
-    .limit(limit)
-    .lean();
+      const webseries = (section.sectionData.webseries || []).map(item => ({
+        ...item.toObject(),
+        type: "webseries"
+      }));
 
-  webseries = await WebSeries.find(query)
-    .sort(sort)
-    .limit(limit)
-    .lean();
-        const manualItems = await SectionItem.find({
-          sectionId: section._id,
-        }).sort({ displayOrder: 1 });
+      const items = [...movies, ...webseries];
 
-        for (let i = 0; i < manualItems.length; i++) {
-          const Model = getModel(manualItems[i].contentType);
-
-          const data = await Model.findById(
-            manualItems[i].contentId
-          ).lean();
-
-          if (data) {
-            items.push({
-              ...data,
-              rank:
-                section.displayStyle === "index_vertical"
-                  ? i + 1
-                  : undefined,
-            });
-          }
-        }
-      }
-
-      /* ===============================
-         🔥 AUTO DATA
-      =============================== */
-      else {
-        const Model = getModel(section.contentType);
-
-        let query = { isPublished: true };
-
-        if (section.categoryId) {
-          query.categoryId = section.categoryId;
-        }
-
-        if (section.isOriginalOnly) {
-          query.isOriginal = true;
-        }
-
-        let sort = {};
-
-        if (section.sortConfig?.field) {
-          sort[section.sortConfig.field] =
-            section.sortConfig.order === "asc" ? 1 : -1;
-        } else {
-          sort = { views: -1 };
-        }
-
-        let limit =
-          section.displayStyle === "index_vertical"
-            ? 10
-            : section.itemLimit;
-
-        let data = await Model.find(query)
-          .sort(sort)
-          .limit(limit)
-          .lean();
-
-        items = data.map((item, index) => ({
-          ...item,
-          rank:
-            section.displayStyle === "index_vertical"
-              ? index + 1
-              : undefined,
-        }));
-      }
-
-      /* 🔥 FINAL STRUCTURE FIX */
-      finalData.push({
+      return {
         title: section.title,
-        type: section.sectionType,
-        movies: items,
-         webseries: webseries,
-      });
-    }
+        displayStyle: section.displayStyle,
+        sectionData: items
+      };
+    });
 
     res.json({
       success: true,
@@ -313,105 +292,3 @@ exports.getHomeSections = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// exports.getHomeSections = async (req, res) => {
-//   try {
-//     const sections = await HomeSection.find({ isActive: true })
-//       .sort({ displayOrder: 1 })
-//       .lean();
-
-//     const finalData = [];
-
-//     for (let section of sections) {
-//       let items = [];
-
-//       /* ===============================
-//          🔥 ADMIN SELECTED
-//       =============================== */
-//       if (section.contentSource === "admin_selected") {
-//         const manualItems = await SectionItem.find({
-//           sectionId: section._id,
-//         }).sort({ displayOrder: 1 });
-
-//         for (let i = 0; i < manualItems.length; i++) {
-//           const Model = getModel(manualItems[i].contentType);
-
-//           const data = await Model.findById(
-//             manualItems[i].contentId
-//           ).lean();
-
-//           if (data) {
-//             items.push({
-//               ...data,
-//               rank:
-//                 section.displayStyle === "index_vertical"
-//                   ? i + 1
-//                   : undefined,
-//             });
-//           }
-//         }
-//       }
-
-//       /* ===============================
-//          🔥 AUTO DATA
-//       =============================== */
-//       else {
-//         const Model = getModel(section.contentType);
-
-//         let query = { isPublished: true };
-
-//         if (section.categoryId) {
-//           query.categoryId = section.categoryId;
-//         }
-
-//         if (section.isOriginalOnly) {
-//           query.isOriginal = true;
-//         }
-
-//         let sort = {};
-
-//         if (section.sortConfig?.field) {
-//           sort[section.sortConfig.field] =
-//             section.sortConfig.order === "asc" ? 1 : -1;
-//         } else {
-//           sort = { views: -1 };
-//         }
-
-//         let limit =
-//           section.displayStyle === "index_vertical"
-//             ? 10
-//             : section.itemLimit;
-
-//         let data = await Model.find(query)
-//           .sort(sort)
-//           .limit(limit)
-//           .lean();
-
-//         items = data.map((item, index) => ({
-//           ...item,
-//           rank:
-//             section.displayStyle === "index_vertical"
-//               ? index + 1
-//               : undefined,
-//         }));
-//       }
-
-//       // finalData.push({
-//       //   ...section,
-//       //   items,
-//       // });
-//       finalData.push({
-//   title: section.title,
-//   type: section.sectionType,
-//   movies: items, // rename items → movies
-// });
-//     }
-
-//     res.json({
-//       success: true,
-//       data: finalData,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
