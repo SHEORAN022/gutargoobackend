@@ -34,6 +34,10 @@ const movieSchema = new mongoose.Schema({
     size:          { type: Number, default: 0 },
     status:        { type: Number, default: 2 }, // 2 = processing, 4 = ready
   },
+  skipIntro:{
+    start:{ type: Number, default: 0},
+    end:{ type: Number, default: 0},
+  },
   customVideoUrl: { type: String, default: "" },
 
   // ─── Trailer ───────────────────────────────────────────────────────────────
