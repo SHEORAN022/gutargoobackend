@@ -124,7 +124,7 @@ sectionData: {
       },
       order: { 
         type: String, 
-        enum: ["asc", "desc"], 
+        enum: ["asc", "desc"],
         default: "desc" 
       },
     },
