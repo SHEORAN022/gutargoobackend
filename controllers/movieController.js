@@ -665,6 +665,65 @@ const getVideoStreamUrl = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+// 🎬 SET SKIP INTRO
+const setMovieSkipIntro = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { start, end } = req.body;
+
+    // ✅ validation
+    if (start == null || end == null) {
+      return res.status(400).json({
+        success: false,
+        message: "Start and End required"
+      });
+    }
+
+    if (start < 0 || end <= start) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid timing"
+      });
+    }
+
+    const movie = await Movie.findById(id);
+
+    if (!movie) {
+      return res.status(404).json({
+        success: false,
+        message: "Movie not found"
+      });
+    }
+
+    // ✅ duration check
+    if (movie.movieFile?.duration && end > movie.movieFile.duration) {
+      return res.status(400).json({
+        success: false,
+        message: "End exceeds video duration"
+      });
+    }
+
+    // ✅ update
+    movie.skipIntro = { start, end };
+
+    await movie.save();
+
+    res.json({
+      success: true,
+      message: "Skip intro updated",
+      data: {
+        skipIntro: movie.skipIntro
+      }
+    });
+
+  } catch (err) {
+    console.error("Skip intro error:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
 
 module.exports = {
   createMovie,
@@ -674,4 +733,6 @@ module.exports = {
   deleteMovie,
   togglePublish,
   getVideoStreamUrl,
+  setMovieSkipIntro , 
 };
+
